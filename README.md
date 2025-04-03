@@ -18,4 +18,4 @@ Para instalar las dependencias, se debe acceder al entorno virtual, y ejecutar e
 
 ## Iniciar el proyecto
 
-Para levantar el proyecto, se debe acceder al entorno virtual, y ejecutar el comando `flask --app cocreate run`.
+Para levantar el proyecto, se debe acceder al entorno virtual, y ejecutar el comando `python app.py`.
