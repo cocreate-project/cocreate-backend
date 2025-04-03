@@ -1,7 +1,7 @@
 import sqlite3
-import password
+from .password import hash_password
 
-def create_database():
+def create_database() -> None:
     conn = sqlite3.connect('cocreate.db')
     cursor = conn.cursor()
 
@@ -30,18 +30,42 @@ def create_database():
     conn.commit()
     conn.close()
 
-def create_user(_username, _password, _content_type, _target_audience, _additional_context):
+def create_user(_username, _password, _content_type, _target_audience, _additional_context) -> None:
     conn = sqlite3.connect('cocreate.db')
     cursor = conn.cursor()
 
-    password_hash = password.hash_password(_password)
+    password_hash = hash_password(_password)
 
     # Insert a new user
     cursor.execute('''
-        INSERT INTO users (username, password, content_type, target_audience, additional_context)
-        VALUES (?, ?, ?, ?, ?)
-    ''', (_username, password_hash, _content_type, _target_audience, _additional_context))
+        INSERT INTO users (username, password, content_type, target_audience, additional_context, generations)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ''', (_username, password_hash, _content_type, _target_audience, _additional_context, "[]"))
 
     cursor.close()
     conn.commit()
     conn.close()
+
+def get_user_by_id(id):
+    conn = sqlite3.connect('cocreate.db')
+    cursor = conn.cursor()
+
+    user = cursor.execute('SELECT * FROM users WHERE id = ?', [str(id)]).fetchone()
+
+    cursor.close()
+    conn.commit()
+    conn.close()
+
+    return user
+
+def get_user_by_username(username):
+    conn = sqlite3.connect('cocreate.db')
+    cursor = conn.cursor()
+
+    user = cursor.execute('SELECT * FROM users WHERE username = ?', [username]).fetchone()
+
+    cursor.close()
+    conn.commit()
+    conn.close()
+
+    return user
