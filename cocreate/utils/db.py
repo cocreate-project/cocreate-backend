@@ -30,22 +30,28 @@ def create_database() -> None:
     conn.commit()
     conn.close()
 
-def create_user(_username = "", _password = "", _content_type = "", _target_audience = "", _additional_context = "") -> None:
+def create_user(_username="", _password="", _content_type="", _target_audience="", _additional_context=""):
     conn = sqlite3.connect('cocreate.db')
     cursor = conn.cursor()
 
-    password_hash = hash_password(_password)
-    formatted_username = _username.lower()
+    try:
+        password_hash = hash_password(_password)
+        formatted_username = _username.lower()
 
-    # Insert a new user
-    cursor.execute('''
-        INSERT INTO users (username, password, content_type, target_audience, additional_context, generations)
-        VALUES (?, ?, ?, ?, ?, ?)
-    ''', (formatted_username, password_hash, _content_type, _target_audience, _additional_context, "[]"))
+        cursor.execute('''
+            INSERT INTO users (username, password, content_type, target_audience, additional_context, generations)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (formatted_username, password_hash, _content_type, _target_audience, _additional_context, "[]"))
 
-    cursor.close()
-    conn.commit()
-    conn.close()
+        conn.commit()
+        return {"success": True, "message": f"User {formatted_username} created."}
+
+    except sqlite3.IntegrityError:
+        return {"success": False, "message": "User already exists."}
+
+    finally:
+        cursor.close()
+        conn.close()
 
 def get_user_by_id(id):
     conn = sqlite3.connect('cocreate.db')
