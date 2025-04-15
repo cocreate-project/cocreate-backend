@@ -1,6 +1,5 @@
 import jwt
 import os
-import ast
 from flask import Blueprint, request, jsonify
 from .utils import db, validate, password
 
