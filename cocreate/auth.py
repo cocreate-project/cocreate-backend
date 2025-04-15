@@ -13,7 +13,7 @@ def login():
     data = request.json or {}
 
     username = data.get("username", "").lower()
-    pwd = data.get("password", "")  # Renamed to avoid shadowing the module name
+    pwd = data.get("password", "")
 
     # Validate user exists
     user_result = db.get_user_by_username(username)
@@ -24,7 +24,7 @@ def login():
     user = user_result["user"]
     user_id = user[0]
     stored_password = db.get_user_password_by_id(user_id)
-    if not password.valid(pwd, stored_password):  # Fixed parameter order
+    if not password.valid(pwd, stored_password):
         return {"success": False, "message": "Invalid password"}, 400
 
     # Generate JWT token
