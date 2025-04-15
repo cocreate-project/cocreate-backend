@@ -1,5 +1,7 @@
+import jwt
+import os
 from flask import Blueprint, request
-from .utils import db, validate
+from .utils import db, validate, password
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -19,10 +21,13 @@ def login():
         data["username"] = ""
     if "password" not in data:
         data["password"] = ""
-    user = db.get_user_by_username(data["username"])
+    user = db.get_user_by_username(data["username"].lower())
     if not user["success"]:
         return user, 400
-    return {"success": True, "message": "Login successful"}, 200
+    if not password.verify_password(data["password"], db.get_user_password_by_id(user["user"][0])):
+        return {"success": False, "message": "Invalid password"}, 400
+    encoded_jwt = jwt.encode({"id": user["user"][0]}, os.getenv("JWT_SECRET"), algorithm="HS256")
+    return {"success": True, "message": "Login successful", "access_token": encoded_jwt, "data": list(user["user"])}, 200
 
 @bp.post("/register")
 def register():
@@ -42,4 +47,6 @@ def register():
     create_user = db.create_user(data["username"], data["password"])
     if not create_user["success"]:
         return create_user, 400
-    return create_user, 200
+    user = db.get_user_by_username(create_user["username"])
+    encoded_jwt = jwt.encode({"id": user["user"][0]}, os.getenv("JWT_SECRET"), algorithm="HS256")
+    return {"success": True, "message": "Register successful", "access_token": encoded_jwt, "data": list(user["user"])}, 200
