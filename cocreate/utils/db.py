@@ -1,12 +1,15 @@
 import sqlite3
-from .password import hash
+from . import password
+from . import format
+
 
 def create_database() -> None:
-    conn = sqlite3.connect('cocreate.db')
+    conn = sqlite3.connect("cocreate.db")
     cursor = conn.cursor()
 
     # Users table creation
-    cursor.execute('''
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL UNIQUE,
@@ -16,35 +19,59 @@ def create_database() -> None:
             additional_context TEXT,
             generations TEXT
         )
-    ''')
+    """
+    )
 
     # Generations table creation
-    cursor.execute('''
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS generations (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             chat TEXT NOT NULL
         )
-    ''')
-    
+    """
+    )
+
     cursor.close()
     conn.commit()
     conn.close()
 
-def create_user(_username="", _password="", _content_type="", _target_audience="", _additional_context=""):
-    conn = sqlite3.connect('cocreate.db')
+
+def create_user(
+    _username="",
+    _password="",
+    _content_type="",
+    _target_audience="",
+    _additional_context="",
+):
+    conn = sqlite3.connect("cocreate.db")
     cursor = conn.cursor()
 
     try:
-        password_hash = hash(_password)
+        password_hash = password.hash(_password)
         formatted_username = _username.lower()
 
-        cursor.execute('''
+        cursor.execute(
+            """
             INSERT INTO users (username, password, content_type, target_audience, additional_context, generations)
             VALUES (?, ?, ?, ?, ?, ?)
-        ''', (formatted_username, password_hash, _content_type, _target_audience, _additional_context, "[]"))
+        """,
+            (
+                formatted_username,
+                password_hash,
+                _content_type,
+                _target_audience,
+                _additional_context,
+                "[]",
+            ),
+        )
 
         conn.commit()
-        return {"success": True, "message": f"User {formatted_username} created.", "username": formatted_username}
+        return {
+            "success": True,
+            "message": f"User {formatted_username} created.",
+            "username": formatted_username,
+        }
 
     except sqlite3.IntegrityError:
         return {"success": False, "message": "User already exists."}
@@ -53,17 +80,25 @@ def create_user(_username="", _password="", _content_type="", _target_audience="
         cursor.close()
         conn.close()
 
+
 def get_user_by_id(id):
-    conn = sqlite3.connect('cocreate.db')
+    conn = sqlite3.connect("cocreate.db")
     cursor = conn.cursor()
 
     try:
-        user = cursor.execute('SELECT id, username, content_type, target_audience, additional_context, generations FROM users WHERE id = ?', [str(id)]).fetchone()
+        user = cursor.execute(
+            "SELECT id, username, content_type, target_audience, additional_context, generations FROM users WHERE id = ?",
+            [str(id)],
+        ).fetchone()
 
         if user is None:
             return {"success": False, "message": "User not found."}
 
-        return {"success": True, "message": "User found.", "user": user}
+        return {
+            "success": True,
+            "message": "User found.",
+            "user": format.user_data(user),
+        }
 
     except sqlite3.Error as e:
         return {"success": False, "message": f"An error occurred: {str(e)}"}
@@ -71,18 +106,26 @@ def get_user_by_id(id):
     finally:
         cursor.close()
         conn.close()
+
 
 def get_user_by_username(username):
-    conn = sqlite3.connect('cocreate.db')
+    conn = sqlite3.connect("cocreate.db")
     cursor = conn.cursor()
 
     try:
-        user = cursor.execute('SELECT id, username, content_type, target_audience, additional_context, generations FROM users WHERE username = ?', [username]).fetchone()
+        user = cursor.execute(
+            "SELECT id, username, content_type, target_audience, additional_context, generations FROM users WHERE username = ?",
+            [username],
+        ).fetchone()
 
         if user is None:
             return {"success": False, "message": "User not found."}
 
-        return {"success": True, "message": "User found.", "user": user}
+        return {
+            "success": True,
+            "message": "User found.",
+            "user": format.user_data(user),
+        }
 
     except sqlite3.Error as e:
         return {"success": False, "message": f"An error occurred: {str(e)}"}
@@ -91,11 +134,14 @@ def get_user_by_username(username):
         cursor.close()
         conn.close()
 
+
 def get_user_password_by_id(id):
-    conn = sqlite3.connect('cocreate.db')
+    conn = sqlite3.connect("cocreate.db")
     cursor = conn.cursor()
 
-    password = cursor.execute('SELECT password FROM users WHERE id = ?', [str(id)]).fetchone()
+    password = cursor.execute(
+        "SELECT password FROM users WHERE id = ?", [str(id)]
+    ).fetchone()
 
     cursor.close()
     conn.commit()

@@ -22,31 +22,20 @@ def login():
 
     # Validate password
     user = user_result["user"]
-    user_id = user[0]
-    stored_password = db.get_user_password_by_id(user_id)
+    stored_password = db.get_user_password_by_id(user["id"])
     if not password.valid(pwd, stored_password):
         return {"success": False, "message": "Invalid password"}, 400
 
     # Generate JWT token
     encoded_jwt = jwt.encode(
-        {"id": user_id}, os.getenv("JWT_SECRET"), algorithm="HS256"
+        {"id": user["id"]}, os.getenv("JWT_SECRET"), algorithm="HS256"
     )
-
-    # Convert user tuple to a named dictionary
-    user_data = {
-        "id": user[0],
-        "username": user[1],
-        "content_type": user[2],
-        "target_audience": user[3],
-        "additional_context": user[4],
-        "generations": ast.literal_eval(user[5])
-    }
 
     return {
         "success": True,
         "message": "Login successful",
         "access_token": encoded_jwt,
-        "user": user_data,
+        "user": user,
     }, 200
 
 
@@ -76,24 +65,13 @@ def register():
     # Get user and generate token
     user_result = db.get_user_by_username(create_result["username"])
     user = user_result["user"]
-    user_id = user[0]
     encoded_jwt = jwt.encode(
-        {"id": user_id}, os.getenv("JWT_SECRET"), algorithm="HS256"
+        {"id": user["id"]}, os.getenv("JWT_SECRET"), algorithm="HS256"
     )
-
-    # Convert user tuple to a named dictionary
-    user_data = {
-        "id": user[0],
-        "username": user[1],
-        "content_type": user[2],
-        "target_audience": user[3],
-        "additional_context": user[4],
-        "generations": ast.literal_eval(user[5])
-    }
 
     return {
         "success": True,
         "message": "Registration successful",
         "access_token": encoded_jwt,
-        "user": user_data,
+        "user": user,
     }, 200
