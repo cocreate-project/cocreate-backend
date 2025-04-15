@@ -1,5 +1,5 @@
 import sqlite3
-from .password import hash_password
+from .password import hash
 
 def create_database() -> None:
     conn = sqlite3.connect('cocreate.db')
@@ -35,7 +35,7 @@ def create_user(_username="", _password="", _content_type="", _target_audience="
     cursor = conn.cursor()
 
     try:
-        password_hash = hash_password(_password)
+        password_hash = hash(_password)
         formatted_username = _username.lower()
 
         cursor.execute('''

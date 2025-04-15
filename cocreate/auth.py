@@ -1,45 +1,99 @@
 import jwt
 import os
-from flask import Blueprint, request
+import ast
+from flask import Blueprint, request, jsonify
 from .utils import db, validate, password
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
+
 @bp.post("/login")
 def login():
-    data = request.json
-    if not data:
-        return {"success": False, "message": "No data provided"}, 400
-    if "username" not in data:
-        data["username"] = ""
-    if "password" not in data:
-        data["password"] = ""
-    user = db.get_user_by_username(data["username"].lower())
-    if not user["success"]:
-        return user, 400
-    if not password.verify_password(data["password"], db.get_user_password_by_id(user["user"][0])):
+    """Handle user login and generate JWT token on success."""
+    data = request.json or {}
+
+    username = data.get("username", "").lower()
+    pwd = data.get("password", "")  # Renamed to avoid shadowing the module name
+
+    # Validate user exists
+    user_result = db.get_user_by_username(username)
+    if not user_result["success"]:
+        return user_result, 400
+
+    # Validate password
+    user = user_result["user"]
+    user_id = user[0]
+    stored_password = db.get_user_password_by_id(user_id)
+    if not password.valid(pwd, stored_password):  # Fixed parameter order
         return {"success": False, "message": "Invalid password"}, 400
-    encoded_jwt = jwt.encode({"id": user["user"][0]}, os.getenv("JWT_SECRET"), algorithm="HS256")
-    return {"success": True, "message": "Login successful", "access_token": encoded_jwt, "data": list(user["user"])}, 200
+
+    # Generate JWT token
+    encoded_jwt = jwt.encode(
+        {"id": user_id}, os.getenv("JWT_SECRET"), algorithm="HS256"
+    )
+
+    # Convert user tuple to a named dictionary
+    user_data = {
+        "id": user[0],
+        "username": user[1],
+        "content_type": user[2],
+        "target_audience": user[3],
+        "additional_context": user[4],
+        "generations": ast.literal_eval(user[5])
+    }
+
+    return {
+        "success": True,
+        "message": "Login successful",
+        "access_token": encoded_jwt,
+        "user": user_data,
+    }, 200
+
 
 @bp.post("/register")
 def register():
-    data = request.json
-    if not data:
-        return {"success": False, "message": "No data provided"}, 400
-    if "username" not in data:
-        data["username"] = ""
-    if "password" not in data:
-        data["password"] = ""
-    is_username_valid = validate.is_username_valid(data["username"])
-    if not is_username_valid["success"]:
-        return is_username_valid, 400
-    is_password_valid = validate.is_password_valid(data["password"])
-    if not is_password_valid["success"]:
-        return is_password_valid, 400
-    create_user = db.create_user(data["username"], data["password"])
-    if not create_user["success"]:
-        return create_user, 400
-    user = db.get_user_by_username(create_user["username"])
-    encoded_jwt = jwt.encode({"id": user["user"][0]}, os.getenv("JWT_SECRET"), algorithm="HS256")
-    return {"success": True, "message": "Register successful", "access_token": encoded_jwt, "data": list(user["user"])}, 200
+    """Register a new user and return JWT token on success."""
+    data = request.json or {}
+
+    username = data.get("username", "").lower()
+    pwd = data.get("password", "")
+
+    # Validate username
+    username_validation = validate.is_username_valid(username)
+    if not username_validation["success"]:
+        return username_validation, 400
+
+    # Validate password
+    password_validation = validate.is_password_valid(pwd)
+    if not password_validation["success"]:
+        return password_validation, 400
+
+    # Create user
+    create_result = db.create_user(username, pwd)
+    if not create_result["success"]:
+        return create_result, 400
+
+    # Get user and generate token
+    user_result = db.get_user_by_username(create_result["username"])
+    user = user_result["user"]
+    user_id = user[0]
+    encoded_jwt = jwt.encode(
+        {"id": user_id}, os.getenv("JWT_SECRET"), algorithm="HS256"
+    )
+
+    # Convert user tuple to a named dictionary
+    user_data = {
+        "id": user[0],
+        "username": user[1],
+        "content_type": user[2],
+        "target_audience": user[3],
+        "additional_context": user[4],
+        "generations": ast.literal_eval(user[5])
+    }
+
+    return {
+        "success": True,
+        "message": "Registration successful",
+        "access_token": encoded_jwt,
+        "user": user_data,
+    }, 200
