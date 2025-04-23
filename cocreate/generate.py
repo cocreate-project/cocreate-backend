@@ -1,7 +1,7 @@
 from google import genai
 import os
 from flask import Blueprint, request
-from .utils import db, validate
+from .utils import validate
 
 bp = Blueprint("generate", __name__, url_prefix="/generate")
 

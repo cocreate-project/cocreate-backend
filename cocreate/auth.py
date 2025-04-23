@@ -1,6 +1,6 @@
 import jwt
 import os
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from .utils import db, validate, password
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")

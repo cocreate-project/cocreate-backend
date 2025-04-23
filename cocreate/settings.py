@@ -1,4 +1,3 @@
-import os
 from flask import Blueprint, request
 from .utils import db, validate
 
