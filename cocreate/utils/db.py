@@ -148,3 +148,90 @@ def get_user_password_by_id(id):
     conn.close()
 
     return password[0]
+
+
+def update_user_content_type(user_id, content_type):
+    """Update a user's content type preference."""
+    conn = sqlite3.connect("cocreate.db")
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            """
+            UPDATE users
+            SET content_type = ?
+            WHERE id = ?
+            """,
+            (content_type, str(user_id)),
+        )
+
+        if cursor.rowcount == 0:
+            return {"success": False, "message": "User not found."}
+
+        conn.commit()
+        return {"success": True, "message": "Content type updated successfully."}
+
+    except sqlite3.Error as e:
+        return {"success": False, "message": f"An error occurred: {str(e)}"}
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def update_user_target_audience(user_id, target_audience):
+    """Update a user's target audience preference."""
+    conn = sqlite3.connect("cocreate.db")
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            """
+            UPDATE users
+            SET target_audience = ?
+            WHERE id = ?
+            """,
+            (target_audience, str(user_id)),
+        )
+
+        if cursor.rowcount == 0:
+            return {"success": False, "message": "User not found."}
+
+        conn.commit()
+        return {"success": True, "message": "Target audience updated successfully."}
+
+    except sqlite3.Error as e:
+        return {"success": False, "message": f"An error occurred: {str(e)}"}
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def update_user_additional_context(user_id, additional_context):
+    """Update a user's additional context."""
+    conn = sqlite3.connect("cocreate.db")
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            """
+            UPDATE users
+            SET additional_context = ?
+            WHERE id = ?
+            """,
+            (additional_context, str(user_id)),
+        )
+
+        if cursor.rowcount == 0:
+            return {"success": False, "message": "User not found."}
+
+        conn.commit()
+        return {"success": True, "message": "Additional context updated successfully."}
+
+    except sqlite3.Error as e:
+        return {"success": False, "message": f"An error occurred: {str(e)}"}
+
+    finally:
+        cursor.close()
+        conn.close()

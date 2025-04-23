@@ -8,7 +8,23 @@ bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 @bp.post("/login")
 def login():
-    """Handle user login and generate JWT token on success."""
+    """Handle user login and generate JWT token on success.
+    
+    Request Body:
+        {
+            "username": "string" - Required. The user's username
+            "password": "string" - Required. The user's password
+        }
+        
+    Returns:
+        200 OK: {
+            "success": true, 
+            "message": "Login successful", 
+            "access_token": "<jwt_token>",
+            "user": {user_object}
+        }
+        400 Bad Request: {"success": false, "message": error_message}
+    """
     data = request.json or {}
 
     username = data.get("username", "").lower()
@@ -29,7 +45,7 @@ def login():
     encoded_jwt = jwt.encode(
         {"id": user["id"]}, os.getenv("JWT_SECRET"), algorithm="HS256"
     )
-
+    
     return {
         "success": True,
         "message": "Login successful",
@@ -40,7 +56,23 @@ def login():
 
 @bp.post("/register")
 def register():
-    """Register a new user and return JWT token on success."""
+    """Register a new user and return JWT token on success.
+    
+    Request Body:
+        {
+            "username": "string" - Required. The username for the new account
+            "password": "string" - Required. The password for the new account
+        }
+        
+    Returns:
+        200 OK: {
+            "success": true, 
+            "message": "Registration successful", 
+            "access_token": "<jwt_token>",
+            "user": {user_object}
+        }
+        400 Bad Request: {"success": false, "message": error_message}
+    """
     data = request.json or {}
 
     username = data.get("username", "").lower()
