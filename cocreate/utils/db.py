@@ -49,8 +49,6 @@ def create_generation(_id=0, _chat=""):
 
         user_generations = user["generations"]
 
-        print(user_generations)
-
         cursor.execute("INSERT INTO generations (chat) VALUES (?)", [_chat])
 
         gen_id = cursor.lastrowid
