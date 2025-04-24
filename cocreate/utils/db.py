@@ -55,7 +55,16 @@ def create_generation(_id=0, _chat=""):
 
         user_generations.append(gen_id)
 
-        cursor.execute("UPDATE users SET generations = ? WHERE id = ?", [str(user_generations), _id])
+        gen_string = "["
+        for i in range(0, len(user_generations)):
+            if i == len(user_generations) - 1:
+                gen_string += str(user_generations[i])
+            else:
+                gen_string += str(user_generations[i]) + ", "
+
+        gen_string += "]"
+
+        cursor.execute("UPDATE users SET generations = ? WHERE id = ?", [gen_string, _id])
 
         conn.commit()
 
