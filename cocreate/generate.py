@@ -58,7 +58,7 @@ def video_script():
         + ". Solo responde con el guion, estructuralo en parrafos con las timestamps correspondientes en formato (HH:MM:SS), no uses emojis, ni texto innecesario.",
     )
 
-    db.create_generation(user["id"], "test")
+    db.create_generation(user["id"], response.text)
 
     return {"success": True, "message": response.text}, 200
 
