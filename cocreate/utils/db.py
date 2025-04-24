@@ -37,6 +37,43 @@ def create_database() -> None:
     conn.close()
 
 
+def create_generation(_id=0, _chat=""):
+    if id == 0:
+        return
+
+    conn = sqlite3.connect("cocreate.db")
+    cursor = conn.cursor()
+
+    try:
+        user = get_user_by_id(_id)["user"]
+
+        user_generations = user["generations"]
+
+        print(user_generations)
+
+        cursor.execute("INSERT INTO generations (chat) VALUES (?)", [_chat])
+
+        gen_id = cursor.lastrowid
+
+        user_generations.append(gen_id)
+
+        cursor.execute("UPDATE users SET generations = ? WHERE id = ?", [str(user_generations), _id])
+
+        conn.commit()
+
+        return {
+            "success": True,
+            "message": f"Generation saved."
+        }
+
+    except sqlite3.IntegrityError:
+        return {"success": False, "message": "Generation already exists."}
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
 def create_user(
     _username="",
     _password="",

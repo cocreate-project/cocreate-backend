@@ -1,7 +1,7 @@
 from google import genai
 import os
 from flask import Blueprint, request
-from .utils import validate
+from .utils import validate, db
 
 bp = Blueprint("generate", __name__, url_prefix="/generate")
 
@@ -23,7 +23,7 @@ def video_script():
         400 Bad Request: {"success": false, "message": "Prompt cannot be empty"}
         401 Unauthorized: {"success": false, "message": "Authorization token required" or validation error}
     """
-    client = genai.Client(api_key=os.getenv("GOOGLE_AI_STUDIO_API_KEY"))
+    #client = genai.Client(api_key=os.getenv("GOOGLE_AI_STUDIO_API_KEY"))
 
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
@@ -45,7 +45,7 @@ def video_script():
     # Extract user from validation result
     user = validation_result["user"]
 
-    response = client.models.generate_content(
+    """response = client.models.generate_content(
         model="gemini-2.0-flash",
         contents="Genera un guion en español para un video sobre "
         + prompt
@@ -56,9 +56,12 @@ def video_script():
         + ". Este es el contexto adicional que quiero incluir:"
         + user.get("additional_context")
         + ". Solo responde con el guion, estructuralo en parrafos con las timestamps correspondientes en formato (HH:MM:SS), no uses emojis, ni texto innecesario.",
-    )
+    )"""
 
-    return {"success": True, "message": response.text}, 200
+    db.create_generation(user["id"], "test")
+
+    #return {"success": True, "message": response.text}, 200
+    return {"success": True}, 200
 
 
 @bp.post("/content-idea")
