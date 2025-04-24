@@ -47,15 +47,14 @@ def video_script():
 
     response = client.models.generate_content(
         model="gemini-2.0-flash",
-        contents="Genera un guion en español para un video sobre "
-        + prompt
-        + ". Este es mi tipo de contenido: "
-        + user.get("content_type")
-        + ". Este es mi publico objetivo: "
-        + user.get("target_audience")
-        + ". Este es el contexto adicional que quiero incluir:"
-        + user.get("additional_context")
-        + ". Solo responde con el guion, estructuralo en parrafos con las timestamps correspondientes en formato (HH:MM:SS), no uses emojis, ni texto innecesario.",
+        contents=(
+            f"Genera un guion en español para un video sobre {prompt}. "
+            f"Este es mi tipo de contenido: {user.get('content_type')}. "
+            f"Este es mi publico objetivo: {user.get('target_audience')}. "
+            f"Este es el contexto adicional que quiero incluir: {user.get('additional_context')}. "
+            "Solo responde con el guion, estructuralo en parrafos con las timestamps correspondientes en formato (HH:MM:SS), "
+            "no uses emojis, ni texto innecesario."
+        ),
     )
 
     db.create_generation(user["id"], response.text)
@@ -104,15 +103,14 @@ def content_idea():
 
     response = client.models.generate_content(
         model="gemini-2.0-flash",
-        contents="Genera 5 ideas de contenido en español sobre "
-        + prompt
-        + ". Este es mi tipo de contenido: "
-        + user.get("content_type")
-        + ". Este es mi publico objetivo: "
-        + user.get("target_audience")
-        + ". Este es el contexto adicional que quiero incluir: "
-        + user.get("additional_context")
-        + ". Por cada idea, incluye un título creativo y una breve descripción de qué podría incluir. Enumera las ideas de 1 a 5.",
+        contents=(
+            f"Genera 5 ideas de contenido en español sobre {prompt}. "
+            f"Este es mi tipo de contenido: {user.get('content_type')}. "
+            f"Este es mi publico objetivo: {user.get('target_audience')}. "
+            f"Este es el contexto adicional que quiero incluir: {user.get('additional_context')}. "
+            "Por cada idea, incluye un título creativo y una breve descripción de qué podría incluir. "
+            "Enumera las ideas de 1 a 5."
+        ),
     )
 
     return {"success": True, "message": response.text}, 200
@@ -159,15 +157,13 @@ def newsletter():
 
     response = client.models.generate_content(
         model="gemini-2.0-flash",
-        contents="Genera el contenido para un newsletter en español sobre "
-        + prompt
-        + ". Este es mi tipo de contenido: "
-        + user.get("content_type")
-        + ". Este es mi publico objetivo: "
-        + user.get("target_audience")
-        + ". Este es el contexto adicional que quiero incluir: "
-        + user.get("additional_context")
-        + ". El newsletter debe incluir un asunto atractivo, una introducción, 2-3 secciones de contenido principal, y una conclusión con llamado a la acción.",
+        contents=(
+            f"Genera el contenido para un newsletter en español sobre {prompt}. "
+            f"Este es mi tipo de contenido: {user.get('content_type')}. "
+            f"Este es mi publico objetivo: {user.get('target_audience')}. "
+            f"Este es el contexto adicional que quiero incluir: {user.get('additional_context')}. "
+            "El newsletter debe incluir un asunto atractivo, una introducción, 2-3 secciones de contenido principal, y una conclusión con llamado a la acción."
+        ),
     )
 
     return {"success": True, "message": response.text}, 200
@@ -214,15 +210,15 @@ def thread():
 
     response = client.models.generate_content(
         model="gemini-2.0-flash",
-        contents="Genera un hilo de X (anteriormente Twitter) en español sobre "
-        + prompt
-        + ". Este es mi tipo de contenido: "
-        + user.get("content_type")
-        + ". Este es mi publico objetivo: "
-        + user.get("target_audience")
-        + ". Este es el contexto adicional que quiero incluir: "
-        + user.get("additional_context")
-        + ". El hilo debe tener entre 5 y 8 tweets, cada uno numerado (1/8, 2/8, etc.). Asegúrate que cada tweet sea conciso y no exceda los 280 caracteres. El primer tweet debe captar la atención y el último debe incluir un llamado a la acción.",
+        contents=(
+            f"Genera un hilo de X (anteriormente Twitter) en español sobre {prompt}. "
+            f"Este es mi tipo de contenido: {user.get('content_type')}. "
+            f"Este es mi publico objetivo: {user.get('target_audience')}. "
+            f"Este es el contexto adicional que quiero incluir: {user.get('additional_context')}. "
+            "El hilo debe tener entre 5 y 8 tweets, cada uno numerado (1/8, 2/8, etc.). "
+            "Asegúrate que cada tweet sea conciso y no exceda los 280 caracteres. "
+            "El primer tweet debe captar la atención y el último debe incluir un llamado a la acción."
+        ),
     )
 
     return {"success": True, "message": response.text}, 200
@@ -269,11 +265,11 @@ def change_tone():
 
     response = client.models.generate_content(
         model="gemini-2.0-flash",
-        contents="Reescribe el siguiente texto en español con un tono "
-        + tone
-        + ': "'
-        + text
-        + '". Mantén la intención y el mensaje principal, pero adapta el lenguaje y estilo para reflejar el tono solicitado. Solo responde con el texto reescrito, sin explicaciones adicionales.',
+        contents=(
+            f"Reescribe el siguiente texto en español con un tono {tone}: \"{text}\". "
+            "Mantén la intención y el mensaje principal, pero adapta el lenguaje y estilo para reflejar el tono solicitado. "
+            "Solo responde con el texto reescrito, sin explicaciones adicionales."
+        ),
     )
 
     return {"success": True, "message": response.text}, 200
