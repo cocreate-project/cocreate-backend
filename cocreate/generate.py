@@ -9,15 +9,15 @@ bp = Blueprint("generate", __name__, url_prefix="/generate")
 @bp.post("/video-script")
 def video_script():
     """Generate a video script based on the provided prompt and user parameters.
-    
+
     Headers:
         Authorization: Bearer <jwt_token> - JWT token for user authentication
-        
+
     Request Body:
         {
             "prompt": "string" - Required. The topic for the video script
         }
-        
+
     Returns:
         200 OK: {"success": true, "message": "<generated script>"}
         400 Bad Request: {"success": false, "message": "Prompt cannot be empty"}
@@ -65,15 +65,15 @@ def video_script():
 @bp.post("/content-idea")
 def content_idea():
     """Generate content ideas based on the provided prompt and user parameters.
-    
+
     Headers:
         Authorization: Bearer <jwt_token> - JWT token for user authentication
-        
+
     Request Body:
         {
             "prompt": "string" - Required. The topic for content ideas generation
         }
-        
+
     Returns:
         200 OK: {"success": true, "message": "<generated ideas>"}
         400 Bad Request: {"success": false, "message": "Prompt cannot be empty"}
@@ -119,17 +119,17 @@ def content_idea():
 @bp.post("/newsletter")
 def newsletter():
     """Generate newsletter content based on the provided prompt and user parameters.
-    
+
     Headers:
         Authorization: Bearer <jwt_token> - JWT token for user authentication
-        
+
     Request Body:
         {
             "prompt": "string" - Required. The topic for the newsletter content
         }
-        
+
     Returns:
-        200 OK: {"success": true, "message": "<generated newsletter content>"}
+        200 OK: {"success": true, "message": ["<generated newsletter content>", ...]}
         400 Bad Request: {"success": false, "message": "Prompt cannot be empty"}
         401 Unauthorized: {"success": false, "message": "Authorization token required" or validation error}
     """
@@ -162,7 +162,7 @@ def newsletter():
             f"Este es mi tipo de contenido: {user.get('content_type')}. "
             f"Este es mi publico objetivo: {user.get('target_audience')}. "
             f"Este es el contexto adicional que quiero incluir: {user.get('additional_context')}. "
-            "El newsletter debe incluir un asunto atractivo, una introducción, 2-3 secciones de contenido principal, y una conclusión con llamado a la acción."
+            "El newsletter debe incluir un asunto atractivo, un titulo e introduccion, 2-3 secciones de contenido principal, y una conclusión con llamado a la acción."
         ),
     )
 
@@ -172,15 +172,15 @@ def newsletter():
 @bp.post("/thread")
 def thread():
     """Generate X (Twitter) thread content based on the provided prompt and user parameters.
-    
+
     Headers:
         Authorization: Bearer <jwt_token> - JWT token for user authentication
-        
+
     Request Body:
         {
             "prompt": "string" - Required. The topic for the Twitter thread
         }
-        
+
     Returns:
         200 OK: {"success": true, "message": "<generated thread content>"}
         400 Bad Request: {"success": false, "message": "Prompt cannot be empty"}
@@ -215,28 +215,32 @@ def thread():
             f"Este es mi tipo de contenido: {user.get('content_type')}. "
             f"Este es mi publico objetivo: {user.get('target_audience')}. "
             f"Este es el contexto adicional que quiero incluir: {user.get('additional_context')}. "
-            "El hilo debe tener entre 5 y 8 tweets, cada uno numerado (1/8, 2/8, etc.). "
+            "El hilo debe tener entre 5 y 8 tweets, debes devolver cada uno en un array de strings. "
             "Asegúrate que cada tweet sea conciso y no exceda los 280 caracteres. "
             "El primer tweet debe captar la atención y el último debe incluir un llamado a la acción."
         ),
+        config={
+            "response_mime_type": "application/json",
+            "response_schema": list[str],
+        },
     )
 
-    return {"success": True, "message": response.text}, 200
+    return {"success": True, "message": response.parsed}, 200
 
 
 @bp.post("/change-tone")
 def change_tone():
     """Change the tone of provided text based on user parameters.
-    
+
     Headers:
         Authorization: Bearer <jwt_token> - JWT token for user authentication
-        
+
     Request Body:
         {
             "text": "string" - Required. The text to be rewritten with a different tone
             "tone": "string" - Optional. The desired tone (defaults to "profesional")
         }
-        
+
     Returns:
         200 OK: {"success": true, "message": "<rewritten text>"}
         400 Bad Request: {"success": false, "message": "Text cannot be empty"}
@@ -266,7 +270,7 @@ def change_tone():
     response = client.models.generate_content(
         model="gemini-2.0-flash",
         contents=(
-            f"Reescribe el siguiente texto en español con un tono {tone}: \"{text}\". "
+            f'Reescribe el siguiente texto en español con un tono {tone}: "{text}". '
             "Mantén la intención y el mensaje principal, pero adapta el lenguaje y estilo para reflejar el tono solicitado. "
             "Solo responde con el texto reescrito, sin explicaciones adicionales."
         ),
