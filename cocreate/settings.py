@@ -3,6 +3,46 @@ from .utils import db, validate
 
 bp = Blueprint("settings", __name__, url_prefix="/settings")
 
+@bp.delete("/delete-account")
+def delete_user():
+    """
+    Delete a user's account.
+
+    Headers:
+        Authorization: Bearer <jwt_token> - Required. JWT token for user authentication
+
+    Returns:
+        200 OK: {
+            "success": true, 
+            "message": "Account deleted successfully"
+        }
+        401 Unauthorized: {"success": false, "message": "Authorization token required" or validation error}
+    """
+
+    # Get token from Authorization header
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return {"success": False, "message": "Authorization token required"}, 401
+
+    token = auth_header.split(" ")[1]
+
+    # Validate JWT token
+    validation_result = validate.validate_jwt(token)
+    if not validation_result["success"]:
+        return {"success": False, "message": validation_result["message"]}, 401
+
+    # Extract user from validation result
+    user = validation_result["user"]
+    
+    # Delete user account
+    delete_result = db.delete_user(user["id"])
+    if not delete_result["success"]:
+        return delete_result, 400
+
+    return {
+        "success": True,
+        "message": "Account deleted successfully",
+    }, 200
 
 @bp.post("/content-type")
 def update_content_type():

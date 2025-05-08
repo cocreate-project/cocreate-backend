@@ -279,3 +279,30 @@ def update_user_additional_context(user_id, additional_context):
     finally:
         cursor.close()
         conn.close()
+
+def delete_user(user_id):
+    """Delete a user from the database."""
+    conn = sqlite3.connect("cocreate.db")
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            """
+            DELETE FROM users
+            WHERE id = ?
+            """,
+            (str(user_id),),
+        )
+
+        if cursor.rowcount == 0:
+            return {"success": False, "message": "User not found."}
+
+        conn.commit()
+        return {"success": True, "message": "User deleted successfully."}
+
+    except sqlite3.Error as e:
+        return {"success": False, "message": f"An error occurred: {str(e)}"}
+
+    finally:
+        cursor.close()
+        conn.close()
