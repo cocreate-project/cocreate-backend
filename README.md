@@ -29,4 +29,4 @@ La API key de Google se puede obtener desde [Google AI Studio](https://aistudio.
 
 ## Iniciar el proyecto
 
-Para levantar el proyecto, se debe acceder al entorno virtual, y ejecutar el comando `python app.py`.
+Para levantar el proyecto, se debe acceder al entorno virtual, y ejecutar el comando `python cocreate.py`.
