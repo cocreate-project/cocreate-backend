@@ -27,6 +27,10 @@ GOOGLE_AI_STUDIO_API_KEY=apikey
 
 La API key de Google se puede obtener desde [Google AI Studio](https://aistudio.google.com/apikey).
 
+## Seleccionar interpreter en VSCode
+
+Presionar la tecla F1 y buscar la opcion "Python: Select Interpreter", seleccionarla y elegir el interpreter del entorno virtual creado.
+
 ## Iniciar el proyecto
 
 Para levantar el proyecto, se debe acceder al entorno virtual, y ejecutar el comando `python cocreate.py`.
