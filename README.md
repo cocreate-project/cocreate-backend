@@ -16,6 +16,17 @@ Para salir, simplemente se debe escribir el comando `deactivate`.
 
 Para instalar las dependencias, se debe acceder al entorno virtual, y ejecutar el comando `pip install -r ./requirements.txt`.
 
+## Variables de entorno
+
+Se debe crear un archivo `.env` en el directorio raíz, el cual debe contener dos variables:
+
+```
+JWT_SECRET=valor
+GOOGLE_AI_STUDIO_API_KEY=apikey
+```
+
+La API key de Google se puede obtener desde [Google AI Studio](https://aistudio.google.com/apikey).
+
 ## Iniciar el proyecto
 
 Para levantar el proyecto, se debe acceder al entorno virtual, y ejecutar el comando `python app.py`.
