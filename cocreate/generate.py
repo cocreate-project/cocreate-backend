@@ -130,7 +130,7 @@ def newsletter():
         }
 
     Returns:
-        200 OK: {"success": true, "message": ["<generated newsletter content>", ...]}
+        200 OK: {"success": true, "message": {"subject": "<subject>", "title": "<title>", "content": ["<section1>", "<section2>"]}}
         400 Bad Request: {"success": false, "message": "Prompt cannot be empty"}
         401 Unauthorized: {"success": false, "message": "Authorization token required" or validation error}
     """
