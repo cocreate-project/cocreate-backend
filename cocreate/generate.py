@@ -1,4 +1,5 @@
 from google import genai
+from pydantic import BaseModel
 import os
 from flask import Blueprint, request
 from .utils import validate, db
@@ -155,6 +156,11 @@ def newsletter():
     # Extract user from validation result
     user = validation_result["user"]
 
+    class NewsletterResponse(BaseModel):
+        subject: str
+        title: str
+        content: list[str]
+
     response = client.models.generate_content(
         model="gemini-2.0-flash",
         contents=(
@@ -164,9 +170,20 @@ def newsletter():
             f"Este es el contexto adicional que quiero incluir: {user.get('additional_context')}. "
             "El newsletter debe incluir un asunto atractivo, un titulo e introduccion, 2-3 secciones de contenido principal, y una conclusión con llamado a la acción."
         ),
+        config={
+            "response_mime_type": "application/json",
+            "response_schema": NewsletterResponse,
+        },
     )
 
-    return {"success": True, "message": response.text}, 200
+    return {
+        "success": True,
+        "message": {
+            "subject": response.parsed.subject,
+            "title": response.parsed.title,
+            "content": response.parsed.content,
+        },
+    }, 200
 
 
 @bp.post("/thread")
