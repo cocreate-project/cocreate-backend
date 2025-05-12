@@ -27,6 +27,7 @@ def create_database() -> None:
         """
         CREATE TABLE IF NOT EXISTS generations (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            type TEXT NOT NULL,
             chat TEXT NOT NULL
         )
     """
@@ -35,51 +36,6 @@ def create_database() -> None:
     cursor.close()
     conn.commit()
     conn.close()
-
-
-def create_generation(_id=0, _chat=""):
-    if id == 0:
-        return
-
-    conn = sqlite3.connect("cocreate.db")
-    cursor = conn.cursor()
-
-    try:
-        user = get_user_by_id(_id)["user"]
-
-        user_generations = user["generations"]
-
-        cursor.execute("INSERT INTO generations (chat) VALUES (?)", [_chat])
-
-        gen_id = cursor.lastrowid
-
-        user_generations.append(gen_id)
-
-        gen_string = "["
-        for i in range(0, len(user_generations)):
-            if i == len(user_generations) - 1:
-                gen_string += str(user_generations[i])
-            else:
-                gen_string += str(user_generations[i]) + ", "
-
-        gen_string += "]"
-
-        cursor.execute("UPDATE users SET generations = ? WHERE id = ?", [gen_string, _id])
-
-        conn.commit()
-
-        return {
-            "success": True,
-            "message": f"Generation saved."
-        }
-
-    except sqlite3.IntegrityError:
-        return {"success": False, "message": "Generation already exists."}
-
-    finally:
-        cursor.close()
-        conn.close()
-
 
 def create_user(
     _username="",
@@ -302,6 +258,49 @@ def delete_user(user_id):
 
     except sqlite3.Error as e:
         return {"success": False, "message": f"An error occurred: {str(e)}"}
+
+    finally:
+        cursor.close()
+        conn.close()
+
+def create_generation(_id=0, _type="unknown", _chat=""):
+    if _id == 0:
+        return
+
+    conn = sqlite3.connect("cocreate.db")
+    cursor = conn.cursor()
+
+    try:
+        user = get_user_by_id(_id)["user"]
+
+        user_generations = user["generations"]
+
+        cursor.execute("INSERT INTO generations (type, chat) VALUES (?, ?)", [_type, _chat])
+
+        gen_id = cursor.lastrowid
+
+        user_generations.append(gen_id)
+
+        gen_string = "["
+        for i in range(0, len(user_generations)):
+            if i == len(user_generations) - 1:
+                gen_string += str(user_generations[i])
+            else:
+                gen_string += str(user_generations[i]) + ", "
+
+        gen_string += "]"
+
+        cursor.execute("UPDATE users SET generations = ? WHERE id = ?", [gen_string, _id])
+
+        conn.commit()
+
+        return {
+            "success": True,
+            "message": f"Generation saved."
+        }
+
+    except sqlite3.IntegrityError:
+        return {"success": False, "message": "Generation already exists."}
 
     finally:
         cursor.close()

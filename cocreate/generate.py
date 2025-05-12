@@ -58,7 +58,7 @@ def video_script():
         ),
     )
 
-    db.create_generation(user["id"], response.text)
+    db.create_generation(user["id"], "video_script", response.text)
 
     return {"success": True, "message": response.text}, 200
 
@@ -113,6 +113,8 @@ def content_idea():
             "Enumera las ideas de 1 a 5."
         ),
     )
+
+    db.create_generation(user["id"], "content_idea", response.text)
 
     return {"success": True, "message": response.text}, 200
 
@@ -175,6 +177,8 @@ def newsletter():
             "response_schema": NewsletterResponse,
         },
     )
+
+    db.create_generation(user["id"], "newsletter", response.text)
 
     return {
         "success": True,
@@ -241,6 +245,8 @@ def thread():
             "response_schema": list[str],
         },
     )
+
+    db.create_generation(user["id"], "thread", response.text)
 
     return {"success": True, "message": response.parsed}, 200
 
