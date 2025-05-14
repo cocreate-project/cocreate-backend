@@ -11,3 +11,8 @@ def user_data(data):
         "additional_context": data[4],
         "generations": ast.literal_eval(data[5]),
     }
+
+
+def generation_data(data):
+    """Format generation data for display."""
+    return [{"id": row[0], "type": row[1], "content": row[2]} for row in data]

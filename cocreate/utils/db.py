@@ -37,6 +37,7 @@ def create_database() -> None:
     conn.commit()
     conn.close()
 
+
 def create_user(
     _username="",
     _password="",
@@ -236,6 +237,7 @@ def update_user_additional_context(user_id, additional_context):
         cursor.close()
         conn.close()
 
+
 def delete_user(user_id):
     """Delete a user from the database."""
     conn = sqlite3.connect("cocreate.db")
@@ -263,6 +265,7 @@ def delete_user(user_id):
         cursor.close()
         conn.close()
 
+
 def create_generation(_id=0, _type="unknown", _chat=""):
     if _id == 0:
         return
@@ -275,7 +278,9 @@ def create_generation(_id=0, _type="unknown", _chat=""):
 
         user_generations = user["generations"]
 
-        cursor.execute("INSERT INTO generations (type, chat) VALUES (?, ?)", [_type, _chat])
+        cursor.execute(
+            "INSERT INTO generations (type, chat) VALUES (?, ?)", [_type, _chat]
+        )
 
         gen_id = cursor.lastrowid
 
@@ -290,17 +295,43 @@ def create_generation(_id=0, _type="unknown", _chat=""):
 
         gen_string += "]"
 
-        cursor.execute("UPDATE users SET generations = ? WHERE id = ?", [gen_string, _id])
+        cursor.execute(
+            "UPDATE users SET generations = ? WHERE id = ?", [gen_string, _id]
+        )
 
         conn.commit()
 
-        return {
-            "success": True,
-            "message": f"Generation saved."
-        }
+        return {"success": True, "message": f"Generation saved."}
 
     except sqlite3.IntegrityError:
         return {"success": False, "message": "Generation already exists."}
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_generations_by_user_id(user_id):
+    conn = sqlite3.connect("cocreate.db")
+    cursor = conn.cursor()
+
+    try:
+        generations = cursor.execute(
+            "SELECT * FROM generations WHERE id IN (SELECT json_each.value FROM users, json_each(generations) WHERE users.id = ?)",
+            [str(user_id)],
+        ).fetchall()
+
+        if generations is None:
+            return {"success": False, "message": "Generations not found."}
+
+        return {
+            "success": True,
+            "message": "Generations found.",
+            "data": format.generation_data(generations),
+        }
+
+    except sqlite3.Error as e:
+        return {"success": False, "message": f"An error occurred: {str(e)}"}
 
     finally:
         cursor.close()
