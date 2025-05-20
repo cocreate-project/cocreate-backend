@@ -10,6 +10,7 @@ def user_data(data):
         "target_audience": data[3],
         "additional_context": data[4],
         "generations": ast.literal_eval(data[5]),
+        "favorite_generations": ast.literal_eval(data[6])
     }
 
 

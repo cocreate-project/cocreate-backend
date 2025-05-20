@@ -17,7 +17,8 @@ def create_database() -> None:
             content_type TEXT,
             target_audience TEXT,
             additional_context TEXT,
-            generations TEXT
+            generations TEXT,
+            favorite_generations TEXT
         )
     """
     )
@@ -54,8 +55,8 @@ def create_user(
 
         cursor.execute(
             """
-            INSERT INTO users (username, password, content_type, target_audience, additional_context, generations)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO users (username, password, content_type, target_audience, additional_context, generations, favorite_generations)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         """,
             (
                 formatted_username,
@@ -63,6 +64,7 @@ def create_user(
                 _content_type,
                 _target_audience,
                 _additional_context,
+                "[]",
                 "[]",
             ),
         )
@@ -88,7 +90,7 @@ def get_user_by_id(id):
 
     try:
         user = cursor.execute(
-            "SELECT id, username, content_type, target_audience, additional_context, generations FROM users WHERE id = ?",
+            "SELECT id, username, content_type, target_audience, additional_context, generations, favorite_generations FROM users WHERE id = ?",
             [str(id)],
         ).fetchone()
 
@@ -115,7 +117,7 @@ def get_user_by_username(username):
 
     try:
         user = cursor.execute(
-            "SELECT id, username, content_type, target_audience, additional_context, generations FROM users WHERE username = ?",
+            "SELECT id, username, content_type, target_audience, additional_context, generations, favorite_generations FROM users WHERE username = ?",
             [username],
         ).fetchone()
 
@@ -318,6 +320,117 @@ def get_generations_by_user_id(user_id):
     try:
         generations = cursor.execute(
             "SELECT * FROM generations WHERE id IN (SELECT json_each.value FROM users, json_each(generations) WHERE users.id = ?)",
+            [str(user_id)],
+        ).fetchall()
+
+        if generations is None:
+            return {"success": False, "message": "Generations not found."}
+
+        return {
+            "success": True,
+            "message": "Generations found.",
+            "data": format.generation_data(generations),
+        }
+
+    except sqlite3.Error as e:
+        return {"success": False, "message": f"An error occurred: {str(e)}"}
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def save_generation(user_id, generation_id):
+    conn = sqlite3.connect("cocreate.db")
+    cursor = conn.cursor()
+
+    try:
+        user = get_user_by_id(user_id)["user"]
+
+        user_generations = user["generations"]
+        user_saved_generations = user["favorite_generations"]
+
+        if int(generation_id) in user_saved_generations:
+            return {"success": False, "message": "Generation already saved."}
+
+        if int(generation_id) not in user_generations:
+            return {"success": False, "message": "Generation not found."}
+
+        user_saved_generations.append(int(generation_id))
+
+        gen_string = "["
+        for i in range(0, len(user_saved_generations)):
+            if i == len(user_saved_generations) - 1:
+                gen_string += str(user_saved_generations[i])
+            else:
+                gen_string += str(user_saved_generations[i]) + ", "
+
+        gen_string += "]"
+
+        cursor.execute(
+            "UPDATE users SET favorite_generations = ? WHERE id = ?",
+            [gen_string, user_id],
+        )
+
+        conn.commit()
+
+        return {"success": True, "message": f"Generation favorited."}
+
+    except sqlite3.IntegrityError:
+        return {"success": False, "message": "Generation already exists."}
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def unsave_generation(user_id, generation_id):
+    conn = sqlite3.connect("cocreate.db")
+    cursor = conn.cursor()
+
+    try:
+        user = get_user_by_id(user_id)["user"]
+
+        user_saved_generations = user["favorite_generations"]
+
+        if int(generation_id) not in user_saved_generations:
+            return {"success": False, "message": "Generation not found in saved."}
+
+        user_saved_generations.remove(int(generation_id))
+
+        gen_string = "["
+        for i in range(0, len(user_saved_generations)):
+            if i == len(user_saved_generations) - 1:
+                gen_string += str(user_saved_generations[i])
+            else:
+                gen_string += str(user_saved_generations[i]) + ", "
+
+        gen_string += "]"
+
+        cursor.execute(
+            "UPDATE users SET favorite_generations = ? WHERE id = ?",
+            [gen_string, user_id],
+        )
+
+        conn.commit()
+
+        return {"success": True, "message": f"Generation unfavorited."}
+
+    except sqlite3.Error as e:
+        return {"success": False, "message": f"An error occurred: {str(e)}"}
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_saved_generations_by_user_id(user_id):
+    conn = sqlite3.connect("cocreate.db")
+    cursor = conn.cursor()
+
+    try:
+        generations = cursor.execute(
+            "SELECT * FROM generations WHERE id IN (SELECT json_each.value FROM users, json_each(favorite_generations) WHERE users.id = ?)",
             [str(user_id)],
         ).fetchall()
 
