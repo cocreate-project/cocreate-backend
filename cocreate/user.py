@@ -7,19 +7,26 @@ bp = Blueprint("user", __name__, url_prefix="/user")
 
 @bp.get("/")
 def get_user_data():
-    """Get user data.
+    """Get user profile data for the authenticated user.
+    
+    Request Headers:
+        Authorization: "Bearer <jwt_token>" - Required. The JWT token for authentication
         
     Returns:
         200 OK: {
-        'id': ,
-        'username':'',
-        'content_type': '',
-        'target_audience': '',
-        'additional_context': '',
-        'generations': [],
-        'favorite_generations': []
-    }
-        400 Bad Request: {"success": false, "message": error_message}
+            "success": true,
+            "message": "User found.",
+            "user": {
+                "id": int,
+                "username": string,
+                "content_type": string,
+                "target_audience": string,
+                "additional_context": string,
+                "generations": array,
+                "favorite_generations": array
+            }
+        }
+        401 Unauthorized: {"success": false, "message": error_message}
     """
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
