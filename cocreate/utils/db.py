@@ -340,6 +340,33 @@ def get_generations_by_user_id(user_id):
         conn.close()
 
 
+def get_generation_by_gen_id(user_id, gen_id):
+    conn = sqlite3.connect("cocreate.db")
+    cursor = conn.cursor()
+
+    try:
+        generation = cursor.execute(
+            "SELECT * FROM generations WHERE id IN (SELECT json_each.value FROM users, json_each(generations) WHERE users.id = ?) AND id = ?",
+            [str(user_id), str(gen_id)],
+        ).fetchone()
+
+        if generation is None:
+            return {"success": False, "message": "Generation not found for this user."}
+
+        return {
+            "success": True,
+            "message": "Generation found.",
+            "data": format.generation_data([generation]),
+        }
+
+    except sqlite3.Error as e:
+        return {"success": False, "message": f"An error occurred: {str(e)}"}
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
 def save_generation(user_id, generation_id):
     conn = sqlite3.connect("cocreate.db")
     cursor = conn.cursor()

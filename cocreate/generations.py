@@ -49,6 +49,49 @@ def get_generations():
     }
 
 
+@bp.get("/<int:gen_id>")
+def get_generation_by_gen_id(gen_id):
+    """Retrieve a generation for the authenticated user by its ID.
+    
+    Request Headers:
+        Authorization: Bearer <jwt_token> - Required. JWT token for authentication
+        
+    Returns:
+        200 OK: {
+            "success": true,
+            "message": "Generation found.",
+            "generation": generation_object
+        }
+        401 Unauthorized: {"success": false, "message": error_message}
+        404 Not Found: {"success": false, "message": error_message}
+    """
+    # Get token from Authorization header
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return {"success": False, "message": "Authorization token required"}, 401
+
+    token = auth_header.split(" ")[1]
+
+    # Validate JWT token
+    validation_result = validate.validate_jwt(token)
+    if not validation_result["success"]:
+        return {"success": False, "message": validation_result["message"]}, 401
+
+    # Extract user from validation result
+    user = validation_result["user"]
+
+    generation = db.get_generation_by_gen_id(user["id"], gen_id)
+
+    if not generation["success"]:
+        return {"success": False, "message": "Generation not found for this user."}, 404
+
+    return {
+        "success": True,
+        "message": "Generation found.",
+        "generation": generation["data"],
+    }, 200
+
+
 @bp.post("/save")
 def save_generation():
     """Save a generation for the authenticated user.
