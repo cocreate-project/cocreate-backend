@@ -1,7 +1,5 @@
-import jwt
-import os
 from flask import Blueprint, request
-from .utils import db, validate, password
+from .utils import validate
 
 bp = Blueprint("user", __name__, url_prefix="/user")
 
