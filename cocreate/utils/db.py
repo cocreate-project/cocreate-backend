@@ -152,6 +152,43 @@ def get_user_password_by_id(id):
 
     return password[0]
 
+def update_user_password_by_id(user_id, new_password):
+    conn = sqlite3.connect("cocreate.db")
+    cursor = conn.cursor()
+
+    try:
+        password_hash = password.hash(new_password)
+
+        cursor.execute(
+            """
+            UPDATE users
+            SET password = ?
+            WHERE id = ?
+            """,
+            (password_hash, str(user_id)),
+        )
+
+        if cursor.rowcount == 0:
+            return {"success": False, "message": "User not found."}
+        
+        conn.commit()
+
+        user = cursor.execute(
+            "SELECT * FROM users WHERE id = ?", [str(user_id)]
+        ).fetchone()
+
+        return {
+            "success": True,
+            "message": "Password updated successfully."
+        }
+        
+    except sqlite3.Error as e:
+        return {"success": False, "message": f"An error occurred: {str(e)}"}
+
+    finally:
+        cursor.close()
+        conn.close()
+
 
 def update_user_content_type(user_id, content_type):
     """Update a user's content type preference."""

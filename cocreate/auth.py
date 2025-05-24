@@ -106,3 +106,70 @@ def register():
         "access_token": encoded_jwt,
         "user": user,
     }, 200
+
+
+
+@bp.post("/update-password")
+def update_password():
+    """Update user password and return new JWT token on success.
+
+    Headers:
+        Authorization: Bearer <jwt_token> - Required. JWT token for user authentication
+    
+    Request Body:
+        {
+            "password": "string" - Required. The new password for the account
+        }
+        
+    Returns:
+        200 OK: {
+            "success": true, 
+            "message": "Password updated successfully", 
+            "access_token": "<jwt_token>",
+            "user": {user_object}
+        }
+        400 Bad Request: {"success": false, "message": "Password cannot be empty."}
+        401 Unauthorized: {"success": false, "message": "Authorization token required" or validation error}
+    """
+    # Get token from Authorization header
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return {"success": False, "message": "Authorization token required"}, 401
+
+    token = auth_header.split(" ")[1]
+
+    # Validate JWT token
+    validation_result = validate.validate_jwt(token)
+    if not validation_result["success"]:
+        return {"success": False, "message": validation_result["message"]}, 401
+
+    # Extract user from validation result
+    user = validation_result["user"]
+    encoded_jwt = jwt.encode(
+        {"id": user["id"]}, os.getenv("JWT_SECRET"), algorithm="HS256"
+    )
+
+    data = request.json or {}
+    new_pwd = data.get("password", "")
+
+    if not new_pwd:
+        return {"success": False, "message": "Password cannot be empty."}, 400
+    
+    # Update user account password
+    update_password_result = db.update_user_password_by_id(user["id"], new_pwd)
+    if not update_password_result["success"]:
+        return update_password_result, 401
+    
+    # Get user and generate new token
+    user_result = db.get_user_by_id(user["id"])
+    user = user_result["user"]
+    encoded_jwt = jwt.encode(
+        {"id": user["id"]}, os.getenv("JWT_SECRET"), algorithm="HS256"
+    )
+
+    return {
+        "success": True,
+        "message": "Password updated successfully",
+        "access_token": encoded_jwt,
+        "user": user,
+    }, 200
