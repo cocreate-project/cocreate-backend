@@ -1,5 +1,6 @@
 from flask import Blueprint, request
-from .utils import validate
+from .utils import validate, log
+from datetime import datetime
 
 bp = Blueprint("user", __name__, url_prefix="/user")
 
@@ -40,6 +41,8 @@ def get_user_data():
 
     # Extract user from validation result
     user = validation_result["user"]
+
+    log.append(f"{datetime.now()} User {user['username']} data retrieved successfully.")
     
     return {
         "success": True,
