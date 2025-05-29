@@ -1,5 +1,6 @@
 from flask import Blueprint, request
-from .utils import db, validate
+from .utils import db, validate, log
+from datetime import datetime
 
 bp = Blueprint("settings", __name__, url_prefix="/settings")
 
@@ -38,6 +39,8 @@ def delete_user():
     delete_result = db.delete_user(user["id"])
     if not delete_result["success"]:
         return delete_result, 400
+    
+    log.append(f"{datetime.now()} User {user['username']} account deleted successfully.")
 
     return {
         "success": True,
@@ -90,6 +93,8 @@ def update_content_type():
     if not update_result["success"]:
         return update_result, 400
 
+    log.append(f"{datetime.now()} User {user['username']} content type set to: {content_type}.")
+
     return {
         "success": True,
         "message": "Content type updated successfully",
@@ -141,6 +146,8 @@ def update_target_audience():
     update_result = db.update_user_target_audience(user["id"], target_audience)
     if not update_result["success"]:
         return update_result, 400
+    
+    log.append(f"{datetime.now()} User {user['username']} target audience set to: {target_audience}.")
 
     return {
         "success": True,
@@ -190,6 +197,11 @@ def update_additional_context():
     update_result = db.update_user_additional_context(user["id"], additional_context)
     if not update_result["success"]:
         return update_result, 400
+    
+    if additional_context:
+        log.append(f"{datetime.now()} User {user['username']} additional context set to: {additional_context}.")
+    else:
+        log.append(f"{datetime.now()} User {user['username']} additional context cleared.")
 
     return {
         "success": True,
