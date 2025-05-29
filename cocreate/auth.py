@@ -1,7 +1,8 @@
 import jwt
 import os
 from flask import Blueprint, request
-from .utils import db, validate, password
+from .utils import db, validate, password, log
+from datetime import datetime
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -46,6 +47,9 @@ def login():
         {"id": user["id"]}, os.getenv("JWT_SECRET"), algorithm="HS256"
     )
     
+    # Log successful login
+    log.append(f"{datetime.now()} User {username} logged in successfully.")
+
     return {
         "success": True,
         "message": "Login successful",
@@ -99,6 +103,9 @@ def register():
     encoded_jwt = jwt.encode(
         {"id": user["id"]}, os.getenv("JWT_SECRET"), algorithm="HS256"
     )
+
+    log.append(f"{datetime.now()} User {username} registered successfully.")
+
 
     return {
         "success": True,
@@ -163,9 +170,12 @@ def update_password():
     # Get user and generate new token
     user_result = db.get_user_by_id(user["id"])
     user = user_result["user"]
+    username = user_result["user"]["username"]
     encoded_jwt = jwt.encode(
         {"id": user["id"]}, os.getenv("JWT_SECRET"), algorithm="HS256"
     )
+
+    log.append(f"{datetime.now()} {username}'s password updated successfully.")
 
     return {
         "success": True,
