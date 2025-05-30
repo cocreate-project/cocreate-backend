@@ -2,7 +2,8 @@ from google import genai
 from pydantic import BaseModel
 import os
 from flask import Blueprint, request
-from .utils import validate, db
+from .utils import validate, db, log
+from datetime import datetime
 
 bp = Blueprint("generate", __name__, url_prefix="/generate")
 
@@ -60,6 +61,8 @@ def video_script():
 
     db.create_generation(user["id"], "video_script", response.text)
 
+    log.append(f"{datetime.now()} User {user['username']} generated a video script.")
+
     return {"success": True, "message": response.text}, 200
 
 
@@ -115,6 +118,8 @@ def content_idea():
     )
 
     db.create_generation(user["id"], "content_idea", response.text)
+
+    log.append(f"{datetime.now()} User {user['username']} generated content ideas.")
 
     return {"success": True, "message": response.text}, 200
 
@@ -179,6 +184,8 @@ def newsletter():
     )
 
     db.create_generation(user["id"], "newsletter", response.text)
+
+    log.append(f"{datetime.now()} User {user['username']} generated a newsletter.")
 
     return {
         "success": True,
@@ -248,6 +255,8 @@ def thread():
 
     db.create_generation(user["id"], "thread", response.text)
 
+    log.append(f"{datetime.now()} User {user['username']} generated an X thread.")
+
     return {"success": True, "message": response.parsed}, 200
 
 
@@ -282,6 +291,9 @@ def change_tone():
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
         return {"success": False, "message": validation_result["message"]}, 401
+    
+    # Extract user from validation result
+    user = validation_result["user"]
 
     data = request.get_json()
     text = data.get("text", "")
@@ -298,5 +310,7 @@ def change_tone():
             "Solo responde con el texto reescrito, sin explicaciones adicionales."
         ),
     )
+
+    log.append(f"{datetime.now()} User {user['username']} changed tone of text.")
 
     return {"success": True, "message": response.text}, 200

@@ -9,7 +9,7 @@ def generate():
     # Crear el archivo de log en el directorio raíz
     log_path = os.path.join(base_dir, "cocreate.log")
     with open(log_path, "a", encoding="utf-8") as archivo:
-        print(f"{datetime.now()} Log file loaded successfully", file=archivo)
+        print(f"{datetime.now()} Log file loaded successfully.", file=archivo)
 
 
 def append(str): 
