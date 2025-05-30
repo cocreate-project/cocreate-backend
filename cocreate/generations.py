@@ -23,6 +23,7 @@ def get_generations():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
+        log.append(f"{datetime.now()} Failed to retrieve generations: Authorization token required.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -30,6 +31,7 @@ def get_generations():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
+        log.append(f"{datetime.now()} Failed to retrieve generations: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     # Extract user from validation result
@@ -72,6 +74,7 @@ def get_generation_by_gen_id(gen_id):
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
+        log.append(f"{datetime.now()} Failed to retrieve generation {gen_id}: Authorization token required.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -79,6 +82,7 @@ def get_generation_by_gen_id(gen_id):
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
+        log.append(f"{datetime.now()} Failed to retrieve generation {gen_id}: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     # Extract user from validation result
@@ -120,6 +124,7 @@ def save_generation():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
+        log.append(f"{datetime.now()} Failed to save generation: Authorization token required.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -127,6 +132,7 @@ def save_generation():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
+        log.append(f"{datetime.now()} Failed to save generation: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     # Extract user from validation result
@@ -135,6 +141,7 @@ def save_generation():
     # Get generation ID from request
     generation_id = request.json.get("gen_id")
     if not generation_id:
+        log.append(f"{datetime.now()} User {user['username']} failed to save generation: Generation ID is required.")
         return {"success": False, "message": "Generation ID is required"}, 400
 
     # Save generation to database
@@ -168,6 +175,7 @@ def unsave_generation():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
+        log.append(f"{datetime.now()} Failed to unsave generation: Authorization token required.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -175,6 +183,7 @@ def unsave_generation():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
+        log.append(f"{datetime.now()} Failed to unsave generation: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     # Extract user from validation result
@@ -183,6 +192,7 @@ def unsave_generation():
     # Get generation ID from request
     generation_id = request.json.get("gen_id")
     if not generation_id:
+        log.append(f"{datetime.now()} User {user['username']} failed to unsave generation: Generation ID is required.")
         return {"success": False, "message": "Generation ID is required"}, 400
 
     # Unsave generation from database
@@ -213,6 +223,7 @@ def get_saved_generations():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
+        log.append(f"{datetime.now()} Failed to retrieve saved generations: Authorization token required.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -220,6 +231,7 @@ def get_saved_generations():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
+        log.append(f"{datetime.now()} Failed to retrieve saved generations: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     # Extract user from validation result

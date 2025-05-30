@@ -30,6 +30,7 @@ def get_user_data():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
+        log.append(f"{datetime.now()} Failed to retrieve user data: Authorization token required.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -37,6 +38,7 @@ def get_user_data():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
+        log.append(f"{datetime.now()} Failed to retrieve user data: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     # Extract user from validation result

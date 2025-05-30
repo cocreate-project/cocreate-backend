@@ -30,6 +30,7 @@ def video_script():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
+        log.append(f"{datetime.now()} Failed to generate video script: Authorization token required.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -37,11 +38,13 @@ def video_script():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
+        log.append(f"{datetime.now()} Failed to generate video script: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     prompt = request.get_json()["prompt"]
 
     if not prompt:
+        log.append(f"{datetime.now()} Failed to generate video script: Prompt cannot be empty.")
         return {"success": False, "message": "Prompt cannot be empty"}, 400
 
     # Extract user from validation result
@@ -88,6 +91,7 @@ def content_idea():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
+        log.append(f"{datetime.now()} Failed to generate content ideas: Authorization token required.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -95,11 +99,13 @@ def content_idea():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
+        log.append(f"{datetime.now()} Failed to generate content ideas: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     prompt = request.get_json()["prompt"]
 
     if not prompt:
+        log.append(f"{datetime.now()} Failed to generate content ideas: Prompt cannot be empty.")
         return {"success": False, "message": "Prompt cannot be empty"}, 400
 
     # Extract user from validation result
@@ -146,6 +152,7 @@ def newsletter():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
+        log.append(f"{datetime.now()} Failed to generate newsletter: Authorization token required.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -153,11 +160,13 @@ def newsletter():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
+        log.append(f"{datetime.now()} Failed to generate newsletter: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     prompt = request.get_json()["prompt"]
 
     if not prompt:
+        log.append(f"{datetime.now()} Failed to generate newsletter: Prompt cannot be empty.")
         return {"success": False, "message": "Prompt cannot be empty"}, 400
 
     # Extract user from validation result
@@ -219,6 +228,7 @@ def thread():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
+        log.append(f"{datetime.now()} Failed to generate X thread: Authorization token required.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -226,11 +236,13 @@ def thread():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
+        log.append(f"{datetime.now()} Failed to generate X thread: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     prompt = request.get_json()["prompt"]
 
     if not prompt:
+        log.append(f"{datetime.now()} Failed to generate X thread: Prompt cannot be empty.")
         return {"success": False, "message": "Prompt cannot be empty"}, 400
 
     # Extract user from validation result
@@ -283,6 +295,7 @@ def change_tone():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
+        log.append(f"{datetime.now()} Failed to change tone of text: Authorization token required.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -290,6 +303,7 @@ def change_tone():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
+        log.append(f"{datetime.now()} Failed to change tone of text: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
     
     # Extract user from validation result
@@ -300,6 +314,7 @@ def change_tone():
     tone = data.get("tone", "profesional")
 
     if not text:
+        log.append(f"{datetime.now()} Failed to change tone of text: Text cannot be empty.")
         return {"success": False, "message": "Text cannot be empty"}, 400
 
     response = client.models.generate_content(
