@@ -1,5 +1,6 @@
 from flask import Blueprint, request
-from .utils import validate, db
+from .utils import validate, db, log
+from datetime import datetime
 
 bp = Blueprint("generations", __name__, url_prefix="/generations")
 
@@ -37,10 +38,13 @@ def get_generations():
     generations = db.get_generations_by_user_id(user["id"])
 
     if len(generations["data"]) == 0:
+        log.append(f"{datetime.now()} User {user['username']} attempted to retrieve generations but found none.")
         return {
             "success": False,
             "message": "No generations found for this user.",
         }
+    
+    log.append(f"{datetime.now()} User {user['username']} retrieved generations successfully.")
 
     return {
         "success": True,
@@ -83,7 +87,10 @@ def get_generation_by_gen_id(gen_id):
     generation = db.get_generation_by_gen_id(user["id"], gen_id)
 
     if not generation["success"]:
+        log.append(f"{datetime.now()} User {user['username']} attempted to retrieve generation {gen_id} but it was not found.")
         return {"success": False, "message": "Generation not found for this user."}, 404
+
+    log.append(f"{datetime.now()} User {user['username']} retrieved generation {gen_id} successfully.")
 
     return {
         "success": True,
@@ -133,7 +140,10 @@ def save_generation():
     # Save generation to database
     save_result = db.save_generation(user["id"], generation_id)
     if not save_result["success"]:
+        log.append(f"{datetime.now()} User {user['username']} failed to save generation {generation_id}: {save_result['message']}")
         return {"success": False, "message": save_result["message"]}, 500
+    
+    log.append(f"{datetime.now()} User {user['username']} saved generation {generation_id} successfully.")
 
     return {"success": True, "message": "Generation saved successfully."}
 
@@ -178,7 +188,10 @@ def unsave_generation():
     # Unsave generation from database
     unsave_result = db.unsave_generation(user["id"], generation_id)
     if not unsave_result["success"]:
+        log.append(f"{datetime.now()} User {user['username']} failed to unsave generation {generation_id}: {unsave_result['message']}")
         return {"success": False, "message": unsave_result["message"]}, 500
+    
+    log.append(f"{datetime.now()} User {user['username']} unsaved generation {generation_id} successfully.")
 
     return {"success": True, "message": "Generation unsaved successfully."}
 
@@ -215,10 +228,13 @@ def get_saved_generations():
     saved_generations = db.get_saved_generations_by_user_id(user["id"])
 
     if len(saved_generations["data"]) == 0:
+        log.append(f"{datetime.now()} User {user['username']} attempted to retrieve saved generations but found none.")
         return {
             "success": False,
             "message": "No saved generations found for this user.",
         }
+    
+    log.append(f"{datetime.now()} User {user['username']} retrieved saved generations successfully.")
 
     return {
         "success": True,
