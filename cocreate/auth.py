@@ -111,7 +111,7 @@ def register():
 
 @bp.post("/update-password")
 def update_password():
-    """Update user password and return new JWT token on success.
+    """Update user password.
 
     Headers:
         Authorization: Bearer <jwt_token> - Required. JWT token for user authentication
@@ -124,9 +124,7 @@ def update_password():
     Returns:
         200 OK: {
             "success": true, 
-            "message": "Password updated successfully", 
-            "access_token": "<jwt_token>",
-            "user": {user_object}
+            "message": "Password updated successfully"
         }
         400 Bad Request: {"success": false, "message": "Password cannot be empty."}
         401 Unauthorized: {"success": false, "message": "Authorization token required" or validation error}
@@ -145,9 +143,6 @@ def update_password():
 
     # Extract user from validation result
     user = validation_result["user"]
-    encoded_jwt = jwt.encode(
-        {"id": user["id"]}, os.getenv("JWT_SECRET"), algorithm="HS256"
-    )
 
     data = request.json or {}
     new_pwd = data.get("password", "")
@@ -160,16 +155,8 @@ def update_password():
     if not update_password_result["success"]:
         return update_password_result, 401
     
-    # Get user and generate new token
-    user_result = db.get_user_by_id(user["id"])
-    user = user_result["user"]
-    encoded_jwt = jwt.encode(
-        {"id": user["id"]}, os.getenv("JWT_SECRET"), algorithm="HS256"
-    )
-
+    
     return {
         "success": True,
-        "message": "Password updated successfully",
-        "access_token": encoded_jwt,
-        "user": user,
+        "message": "Password updated successfully"
     }, 200
