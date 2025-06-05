@@ -13,7 +13,7 @@ def get_user_data():
     Returns:
         200 OK: {
             "success": true,
-            "message": "User found.",
+            "message": "Usuario encontrado",
             "user": {
                 "id": int,
                 "username": string,
@@ -29,7 +29,7 @@ def get_user_data():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        return {"success": False, "message": "Authorization token required"}, 401
+        return {"success": False, "message": "Token de autorización requerido"}, 401
 
     token = auth_header.split(" ")[1]
 
@@ -43,6 +43,6 @@ def get_user_data():
     
     return {
         "success": True,
-        "message": "User found.",
+        "message": "Usuario encontrado",
         "user": user
     }, 200

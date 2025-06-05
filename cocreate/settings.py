@@ -14,15 +14,15 @@ def delete_user():
     Returns:
         200 OK: {
             "success": true, 
-            "message": "Account deleted successfully"
+            "message": "Cuenta eliminada con éxito"
         }
-        401 Unauthorized: {"success": false, "message": "Authorization token required" or validation error}
+        401 Unauthorized: {"success": false, "message": "Token de autorización requerido" or validation error}
     """
 
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        return {"success": False, "message": "Authorization token required"}, 401
+        return {"success": False, "message": "Token de autorización requerido"}, 401
 
     token = auth_header.split(" ")[1]
 
@@ -41,7 +41,7 @@ def delete_user():
 
     return {
         "success": True,
-        "message": "Account deleted successfully",
+        "message": "Cuenta eliminada con éxito",
     }, 200
 
 @bp.post("/content-type")
@@ -59,15 +59,15 @@ def update_content_type():
     Returns:
         200 OK: {
             "success": true, 
-            "message": "Content type updated successfully"
+            "message": "Tipo de contenido actualizado con éxito"
         }
-        400 Bad Request: {"success": false, "message": "Content type cannot be empty" or error_message}
-        401 Unauthorized: {"success": false, "message": "Authorization token required" or validation error}
+        400 Bad Request: {"success": false, "message": "El tipo de contenido no puede estar vacío" or error_message}
+        401 Unauthorized: {"success": false, "message": "Token de autorización requerido" or validation error}
     """
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        return {"success": False, "message": "Authorization token required"}, 401
+        return {"success": False, "message": "Token de autorización requerido"}, 401
 
     token = auth_header.split(" ")[1]
 
@@ -80,7 +80,7 @@ def update_content_type():
     content_type = data.get("content_type", "")
 
     if not content_type:
-        return {"success": False, "message": "Content type cannot be empty"}, 400
+        return {"success": False, "message": "El tipo de contenido no puede estar vacío"}, 400
 
     # Extract user from validation result
     user = validation_result["user"]
@@ -92,7 +92,7 @@ def update_content_type():
 
     return {
         "success": True,
-        "message": "Content type updated successfully",
+        "message": "Tipo de contenido actualizado con éxito",
     }, 200
 
 
@@ -111,15 +111,15 @@ def update_target_audience():
     Returns:
         200 OK: {
             "success": true, 
-            "message": "Target audience updated successfully"
+            "message": "Público objetivo actualizado con éxito"
         }
-        400 Bad Request: {"success": false, "message": "Target audience cannot be empty" or error_message}
-        401 Unauthorized: {"success": false, "message": "Authorization token required" or validation error}
+        400 Bad Request: {"success": false, "message": "El público objetivo no puede estar vacío" or error_message}
+        401 Unauthorized: {"success": false, "message": "Token de autorización requerido" or validation error}
     """
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        return {"success": False, "message": "Authorization token required"}, 401
+        return {"success": False, "message": "Token de autorización requerido"}, 401
 
     token = auth_header.split(" ")[1]
 
@@ -132,7 +132,7 @@ def update_target_audience():
     target_audience = data.get("target_audience", "")
 
     if not target_audience:
-        return {"success": False, "message": "Target audience cannot be empty"}, 400
+        return {"success": False, "message": "El público objetivo no puede estar vacío"}, 400
 
     # Extract user from validation result
     user = validation_result["user"]
@@ -144,7 +144,7 @@ def update_target_audience():
 
     return {
         "success": True,
-        "message": "Target audience updated successfully",
+        "message": "Público objetivo actualizado con éxito",
     }, 200
 
 
@@ -163,15 +163,15 @@ def update_additional_context():
     Returns:
         200 OK: {
             "success": true, 
-            "message": "Additional context updated successfully"
+            "message": "Contexto adicional actualizado con éxito"
         }
         400 Bad Request: {"success": false, "message": error_message}
-        401 Unauthorized: {"success": false, "message": "Authorization token required" or validation error}
+        401 Unauthorized: {"success": false, "message": "Token de autorización requerido" or validation error}
     """
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        return {"success": False, "message": "Authorization token required"}, 401
+        return {"success": False, "message": "Token de autorización requerido"}, 401
 
     token = auth_header.split(" ")[1]
 
@@ -193,5 +193,5 @@ def update_additional_context():
 
     return {
         "success": True,
-        "message": "Additional context updated successfully",
+        "message": "Contexto adicional actualizado con éxito",
     }, 200

@@ -72,12 +72,12 @@ def create_user(
         conn.commit()
         return {
             "success": True,
-            "message": f"User {formatted_username} created.",
+            "message": f"Usuario {formatted_username} creado.",
             "username": formatted_username,
         }
 
     except sqlite3.IntegrityError:
-        return {"success": False, "message": "User already exists."}
+        return {"success": False, "message": "El usuario ya existe."}
 
     finally:
         cursor.close()
@@ -95,16 +95,16 @@ def get_user_by_id(id):
         ).fetchone()
 
         if user is None:
-            return {"success": False, "message": "User not found."}
+            return {"success": False, "message": "No se encontró el usuario."}
 
         return {
             "success": True,
-            "message": "User found.",
+            "message": "Usuario encontrado.",
             "user": format.user_data(user),
         }
 
     except sqlite3.Error as e:
-        return {"success": False, "message": f"An error occurred: {str(e)}"}
+        return {"success": False, "message": f"Ocurrió un error: {str(e)}"}
 
     finally:
         cursor.close()
@@ -122,16 +122,16 @@ def get_user_by_username(username):
         ).fetchone()
 
         if user is None:
-            return {"success": False, "message": "User not found."}
+            return {"success": False, "message": "No se encontró el usuario."}
 
         return {
             "success": True,
-            "message": "User found.",
+            "message": "Usuario encontrado.",
             "user": format.user_data(user),
         }
 
     except sqlite3.Error as e:
-        return {"success": False, "message": f"An error occurred: {str(e)}"}
+        return {"success": False, "message": f"Ocurrió un error: {str(e)}"}
 
     finally:
         cursor.close()
@@ -169,7 +169,7 @@ def update_user_password_by_id(user_id, new_password):
         )
 
         if cursor.rowcount == 0:
-            return {"success": False, "message": "User not found."}
+            return {"success": False, "message": "Usuario no encontrado."}
         
         conn.commit()
 
@@ -179,11 +179,11 @@ def update_user_password_by_id(user_id, new_password):
 
         return {
             "success": True,
-            "message": "Password updated successfully."
+            "message": "Contraseña actualizada con éxito."
         }
         
     except sqlite3.Error as e:
-        return {"success": False, "message": f"An error occurred: {str(e)}"}
+        return {"success": False, "message": f"Ocurrió un error: {str(e)}"}
 
     finally:
         cursor.close()
@@ -206,13 +206,13 @@ def update_user_content_type(user_id, content_type):
         )
 
         if cursor.rowcount == 0:
-            return {"success": False, "message": "User not found."}
+            return {"success": False, "message": "No se encontró el usuario."}
 
         conn.commit()
-        return {"success": True, "message": "Content type updated successfully."}
+        return {"success": True, "message": "Tipo de contenido actualizado con éxito."}
 
     except sqlite3.Error as e:
-        return {"success": False, "message": f"An error occurred: {str(e)}"}
+        return {"success": False, "message": f"Ocurrió un error: {str(e)}"}
 
     finally:
         cursor.close()
@@ -235,13 +235,13 @@ def update_user_target_audience(user_id, target_audience):
         )
 
         if cursor.rowcount == 0:
-            return {"success": False, "message": "User not found."}
+            return {"success": False, "message": "No se encontró el usuario."}
 
         conn.commit()
-        return {"success": True, "message": "Target audience updated successfully."}
+        return {"success": True, "message": "Público objetivo actualizado con éxito."}
 
     except sqlite3.Error as e:
-        return {"success": False, "message": f"An error occurred: {str(e)}"}
+        return {"success": False, "message": f"Ocurrió un error: {str(e)}"}
 
     finally:
         cursor.close()
@@ -264,13 +264,13 @@ def update_user_additional_context(user_id, additional_context):
         )
 
         if cursor.rowcount == 0:
-            return {"success": False, "message": "User not found."}
+            return {"success": False, "message": "No se encontró el usuario."}
 
         conn.commit()
-        return {"success": True, "message": "Additional context updated successfully."}
+        return {"success": True, "message": "Contexto adicional actualizado correctamente."}
 
     except sqlite3.Error as e:
-        return {"success": False, "message": f"An error occurred: {str(e)}"}
+        return {"success": False, "message": f"Ocurrió un error: {str(e)}"}
 
     finally:
         cursor.close()
@@ -292,13 +292,13 @@ def delete_user(user_id):
         )
 
         if cursor.rowcount == 0:
-            return {"success": False, "message": "User not found."}
+            return {"success": False, "message": "No se encontró el usuario."}
 
         conn.commit()
-        return {"success": True, "message": "User deleted successfully."}
+        return {"success": True, "message": "Usuario eliminado con éxito."}
 
     except sqlite3.Error as e:
-        return {"success": False, "message": f"An error occurred: {str(e)}"}
+        return {"success": False, "message": f"Ocurrió un error: {str(e)}"}
 
     finally:
         cursor.close()
@@ -340,10 +340,10 @@ def create_generation(_id=0, _type="unknown", _chat=""):
 
         conn.commit()
 
-        return {"success": True, "message": f"Generation saved."}
+        return {"success": True, "message": f"Generación guardada."}
 
     except sqlite3.IntegrityError:
-        return {"success": False, "message": "Generation already exists."}
+        return {"success": False, "message": "La generación ya existe."}
 
     finally:
         cursor.close()
@@ -361,16 +361,16 @@ def get_generations_by_user_id(user_id):
         ).fetchall()
 
         if generations is None:
-            return {"success": False, "message": "Generations not found."}
+            return {"success": False, "message": "No se encontraron generaciones."}
 
         return {
             "success": True,
-            "message": "Generations found.",
+            "message": "Generaciones encontradas.",
             "data": format.generation_data(generations),
         }
 
     except sqlite3.Error as e:
-        return {"success": False, "message": f"An error occurred: {str(e)}"}
+        return {"success": False, "message": f"Ocurrió un error: {str(e)}"}
 
     finally:
         cursor.close()
@@ -388,16 +388,16 @@ def get_generation_by_gen_id(user_id, gen_id):
         ).fetchone()
 
         if generation is None:
-            return {"success": False, "message": "Generation not found for this user."}
+            return {"success": False, "message": "No se encontró la generación para este usuario."}
 
         return {
             "success": True,
-            "message": "Generation found.",
+            "message": "Generación encontrada.",
             "data": format.generation_data([generation]),
         }
 
     except sqlite3.Error as e:
-        return {"success": False, "message": f"An error occurred: {str(e)}"}
+        return {"success": False, "message": f"Ocurrió un error: {str(e)}"}
 
     finally:
         cursor.close()
@@ -415,10 +415,10 @@ def save_generation(user_id, generation_id):
         user_saved_generations = user["favorite_generations"]
 
         if int(generation_id) in user_saved_generations:
-            return {"success": False, "message": "Generation already saved."}
+            return {"success": False, "message": "La generación ya está en la lista de favoritos."}
 
         if int(generation_id) not in user_generations:
-            return {"success": False, "message": "Generation not found."}
+            return {"success": False, "message": "No se encontró la generación."}
 
         user_saved_generations.append(int(generation_id))
 
@@ -438,10 +438,10 @@ def save_generation(user_id, generation_id):
 
         conn.commit()
 
-        return {"success": True, "message": f"Generation favorited."}
+        return {"success": True, "message": f"Generación añadida a la lista de favoritos."}
 
     except sqlite3.IntegrityError:
-        return {"success": False, "message": "Generation already exists."}
+        return {"success": False, "message": "La generación ya existe."}
 
     finally:
         cursor.close()
@@ -458,7 +458,7 @@ def unsave_generation(user_id, generation_id):
         user_saved_generations = user["favorite_generations"]
 
         if int(generation_id) not in user_saved_generations:
-            return {"success": False, "message": "Generation not found in saved."}
+            return {"success": False, "message": "No se encontró la generación en la lista de favoritos."}
 
         user_saved_generations.remove(int(generation_id))
 
@@ -478,10 +478,10 @@ def unsave_generation(user_id, generation_id):
 
         conn.commit()
 
-        return {"success": True, "message": f"Generation unfavorited."}
+        return {"success": True, "message": f"Generación removida de la lista de favoritos."}
 
     except sqlite3.Error as e:
-        return {"success": False, "message": f"An error occurred: {str(e)}"}
+        return {"success": False, "message": f"Ocurrió un error: {str(e)}"}
 
     finally:
         cursor.close()
@@ -499,16 +499,16 @@ def get_saved_generations_by_user_id(user_id):
         ).fetchall()
 
         if generations is None:
-            return {"success": False, "message": "Generations not found."}
+            return {"success": False, "message": "No se encontraron generaciones."}
 
         return {
             "success": True,
-            "message": "Generations found.",
+            "message": "Generaciones encontradas.",
             "data": format.generation_data(generations),
         }
 
     except sqlite3.Error as e:
-        return {"success": False, "message": f"An error occurred: {str(e)}"}
+        return {"success": False, "message": f"Ocurrió un error: {str(e)}"}
 
     finally:
         cursor.close()

@@ -19,7 +19,7 @@ def login():
     Returns:
         200 OK: {
             "success": true, 
-            "message": "Login successful", 
+            "message": "Inicio de sesión exitoso", 
             "access_token": "<jwt_token>",
             "user": {user_object}
         }
@@ -39,7 +39,7 @@ def login():
     user = user_result["user"]
     stored_password = db.get_user_password_by_id(user["id"])
     if not password.valid(pwd, stored_password):
-        return {"success": False, "message": "Invalid password"}, 400
+        return {"success": False, "message": "Contraseña inválida"}, 400
 
     # Generate JWT token
     encoded_jwt = jwt.encode(
@@ -48,7 +48,7 @@ def login():
     
     return {
         "success": True,
-        "message": "Login successful",
+        "message": "Inicio de sesión exitoso",
         "access_token": encoded_jwt,
         "user": user,
     }, 200
@@ -67,7 +67,7 @@ def register():
     Returns:
         200 OK: {
             "success": true, 
-            "message": "Registration successful", 
+            "message": "Registro exitoso", 
             "access_token": "<jwt_token>",
             "user": {user_object}
         }
@@ -102,7 +102,7 @@ def register():
 
     return {
         "success": True,
-        "message": "Registration successful",
+        "message": "Registro exitoso",
         "access_token": encoded_jwt,
         "user": user,
     }, 200
@@ -124,15 +124,15 @@ def update_password():
     Returns:
         200 OK: {
             "success": true, 
-            "message": "Password updated successfully"
+            "message": "Contraseña actualizada correctamente"
         }
-        400 Bad Request: {"success": false, "message": "Password cannot be empty."}
-        401 Unauthorized: {"success": false, "message": "Authorization token required" or validation error}
+        400 Bad Request: {"success": false, "message": "La contraseña no puede estar vacía"}
+        401 Unauthorized: {"success": false, "message": "Token de autorización requerido" or validation error}
     """
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        return {"success": False, "message": "Authorization token required"}, 401
+        return {"success": False, "message": "Token de autorización requerido"}, 401
 
     token = auth_header.split(" ")[1]
 
@@ -148,7 +148,7 @@ def update_password():
     new_pwd = data.get("password", "")
 
     if not new_pwd:
-        return {"success": False, "message": "Password cannot be empty."}, 400
+        return {"success": False, "message": "La contraseña no puede estar vacía"}, 400
     
     # Update user account password
     update_password_result = db.update_user_password_by_id(user["id"], new_pwd)
@@ -158,5 +158,5 @@ def update_password():
     
     return {
         "success": True,
-        "message": "Password updated successfully"
+        "message": "Contraseña actualizada correctamente"
     }, 200

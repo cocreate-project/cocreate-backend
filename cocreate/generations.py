@@ -14,7 +14,7 @@ def get_generations():
     Returns:
         200 OK: {
             "success": true,
-            "message": "Generations found.",
+            "message": "Generaciones encontradas",
             "generations": [array_of_generation_objects]
         }
         401 Unauthorized: {"success": false, "message": error_message}
@@ -22,7 +22,7 @@ def get_generations():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        return {"success": False, "message": "Authorization token required"}, 401
+        return {"success": False, "message": "Token de autorización requerido"}, 401
 
     token = auth_header.split(" ")[1]
 
@@ -39,12 +39,12 @@ def get_generations():
     if len(generations["data"]) == 0:
         return {
             "success": False,
-            "message": "No generations found for this user.",
+            "message": "No se encontraron generaciones para este usuario",
         }
 
     return {
         "success": True,
-        "message": "Generations found.",
+        "message": "Generaciones encontradas",
         "generations": generations["data"],
     }
 
@@ -59,7 +59,7 @@ def get_generation_by_gen_id(gen_id):
     Returns:
         200 OK: {
             "success": true,
-            "message": "Generation found.",
+            "message": "Generación encontrada",
             "generation": generation_object
         }
         401 Unauthorized: {"success": false, "message": error_message}
@@ -68,7 +68,7 @@ def get_generation_by_gen_id(gen_id):
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        return {"success": False, "message": "Authorization token required"}, 401
+        return {"success": False, "message": "Token de autorización requerido"}, 401
 
     token = auth_header.split(" ")[1]
 
@@ -83,11 +83,11 @@ def get_generation_by_gen_id(gen_id):
     generation = db.get_generation_by_gen_id(user["id"], gen_id)
 
     if not generation["success"]:
-        return {"success": False, "message": "Generation not found for this user."}, 404
+        return {"success": False, "message": "No se encontró la generación para este usuario"}, 404
 
     return {
         "success": True,
-        "message": "Generation found.",
+        "message": "Generación encontrada",
         "generation": generation["data"],
     }, 200
 
@@ -105,7 +105,7 @@ def save_generation():
         }
         
     Returns:
-        200 OK: {"success": true, "message": "Generation saved successfully."}
+        200 OK: {"success": true, "message": "La generación ha sido añadida a la lista de favoritos"}
         400 Bad Request: {"success": false, "message": error_message}
         401 Unauthorized: {"success": false, "message": error_message}
         500 Server Error: {"success": false, "message": error_message}
@@ -113,7 +113,7 @@ def save_generation():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        return {"success": False, "message": "Authorization token required"}, 401
+        return {"success": False, "message": "Token de autorización requerido"}, 401
 
     token = auth_header.split(" ")[1]
 
@@ -128,14 +128,14 @@ def save_generation():
     # Get generation ID from request
     generation_id = request.json.get("gen_id")
     if not generation_id:
-        return {"success": False, "message": "Generation ID is required"}, 400
+        return {"success": False, "message": "ID de la generación requerido"}, 400
 
     # Save generation to database
     save_result = db.save_generation(user["id"], generation_id)
     if not save_result["success"]:
         return {"success": False, "message": save_result["message"]}, 500
 
-    return {"success": True, "message": "Generation saved successfully."}
+    return {"success": True, "message": "La generación ha sido añadida a la lista de favoritos"}
 
 @bp.post("/unsave")
 def unsave_generation():
@@ -150,7 +150,7 @@ def unsave_generation():
         }
         
     Returns:
-        200 OK: {"success": true, "message": "Generation unsaved successfully."}
+        200 OK: {"success": true, "message": "La generación ha sido removida de la lista de favoritos"}
         400 Bad Request: {"success": false, "message": error_message}
         401 Unauthorized: {"success": false, "message": error_message}
         500 Server Error: {"success": false, "message": error_message}
@@ -158,7 +158,7 @@ def unsave_generation():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        return {"success": False, "message": "Authorization token required"}, 401
+        return {"success": False, "message": "Token de autorización requerido"}, 401
 
     token = auth_header.split(" ")[1]
 
@@ -173,14 +173,14 @@ def unsave_generation():
     # Get generation ID from request
     generation_id = request.json.get("gen_id")
     if not generation_id:
-        return {"success": False, "message": "Generation ID is required"}, 400
+        return {"success": False, "message": "ID de la generación requerido"}, 400
 
     # Unsave generation from database
     unsave_result = db.unsave_generation(user["id"], generation_id)
     if not unsave_result["success"]:
         return {"success": False, "message": unsave_result["message"]}, 500
 
-    return {"success": True, "message": "Generation unsaved successfully."}
+    return {"success": True, "message": "La generación ha sido removida de la lista de favoritos"}
 
 @bp.get("/saved")
 def get_saved_generations():
@@ -192,7 +192,7 @@ def get_saved_generations():
     Returns:
         200 OK: {
             "success": true,
-            "message": "Saved generations found.",
+            "message": "Generaciones favoritas encontradas",
             "saved_generations": [array_of_saved_generation_objects]
         }
         401 Unauthorized: {"success": false, "message": error_message}
@@ -200,7 +200,7 @@ def get_saved_generations():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        return {"success": False, "message": "Authorization token required"}, 401
+        return {"success": False, "message": "Token de autorización requerido"}, 401
 
     token = auth_header.split(" ")[1]
 
@@ -217,11 +217,11 @@ def get_saved_generations():
     if len(saved_generations["data"]) == 0:
         return {
             "success": False,
-            "message": "No saved generations found for this user.",
+            "message": "No se encontraron generaciones favoritas para este usuario",
         }
 
     return {
         "success": True,
-        "message": "Saved generations found.",
+        "message": "Generaciones favoritas encontradas",
         "saved_generations": saved_generations["data"],
     }
