@@ -4,7 +4,7 @@ from .utils import validate, db
 bp = Blueprint("generations", __name__, url_prefix="/generations")
 
 
-@bp.get("/")
+@bp.get("")
 def get_generations():
     """Retrieve all generations for the authenticated user.
     
