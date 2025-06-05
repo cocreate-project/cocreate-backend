@@ -22,8 +22,8 @@ def video_script():
 
     Returns:
         200 OK: {"success": true, "message": "<generated script>"}
-        400 Bad Request: {"success": false, "message": "Prompt cannot be empty"}
-        401 Unauthorized: {"success": false, "message": "Authorization token required" or validation error}
+        400 Bad Request: {"success": false, "message": "El prompt no puede estar vacío"}
+        401 Unauthorized: {"success": false, "message": "Token de autorización requerido" or validation error}
     """
     client = genai.Client(api_key=os.getenv("GOOGLE_AI_STUDIO_API_KEY"))
 
@@ -31,7 +31,7 @@ def video_script():
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
         log.append(f"{datetime.now()} No se pudo generar guion de video: Token de autorización requerido.")
-        return {"success": False, "message": "Authorization token required"}, 401
+        return {"success": False, "message": "Token de autorización requerido"}, 401
 
     token = auth_header.split(" ")[1]
 
@@ -45,7 +45,7 @@ def video_script():
 
     if not prompt:
         log.append(f"{datetime.now()} No se pudo generar guion de video: El prompt no puede estar vacío.")
-        return {"success": False, "message": "Prompt cannot be empty"}, 400
+        return {"success": False, "message": "El prompt no puede estar vacío"}, 400
 
     # Extract user from validation result
     user = validation_result["user"]
@@ -83,8 +83,8 @@ def content_idea():
 
     Returns:
         200 OK: {"success": true, "message": "<generated ideas>"}
-        400 Bad Request: {"success": false, "message": "Prompt cannot be empty"}
-        401 Unauthorized: {"success": false, "message": "Authorization token required" or validation error}
+        400 Bad Request: {"success": false, "message": "El prompt no puede estar vacío"}
+        401 Unauthorized: {"success": false, "message": "Token de autorización requerido" or validation error}
     """
     client = genai.Client(api_key=os.getenv("GOOGLE_AI_STUDIO_API_KEY"))
 
@@ -92,7 +92,7 @@ def content_idea():
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
         log.append(f"{datetime.now()} No se pudo generar ideas de contenido: Token de autorización requerido.")
-        return {"success": False, "message": "Authorization token required"}, 401
+        return {"success": False, "message": "Token de autorización requerido"}, 401
 
     token = auth_header.split(" ")[1]
 
@@ -106,7 +106,7 @@ def content_idea():
 
     if not prompt:
         log.append(f"{datetime.now()} No se pudo generar ideas de contenido: El prompt no puede estar vacío.")
-        return {"success": False, "message": "Prompt cannot be empty"}, 400
+        return {"success": False, "message": "El prompt no puede estar vacío"}, 400
 
     # Extract user from validation result
     user = validation_result["user"]
@@ -144,8 +144,8 @@ def newsletter():
 
     Returns:
         200 OK: {"success": true, "message": {"subject": "<subject>", "title": "<title>", "content": ["<section1>", "<section2>"]}}
-        400 Bad Request: {"success": false, "message": "Prompt cannot be empty"}
-        401 Unauthorized: {"success": false, "message": "Authorization token required" or validation error}
+        400 Bad Request: {"success": false, "message": "El prompt no puede estar vacío"}
+        401 Unauthorized: {"success": false, "message": "Token de autorización requerido" or validation error}
     """
     client = genai.Client(api_key=os.getenv("GOOGLE_AI_STUDIO_API_KEY"))
 
@@ -153,7 +153,6 @@ def newsletter():
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
         log.append(f"{datetime.now()} No se pudo generar un newsletter: Token de autorización requerido.")
-        return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
 
@@ -167,7 +166,7 @@ def newsletter():
 
     if not prompt:
         log.append(f"{datetime.now()} No se pudo generar un newsletter: El prompt no puede estar vacío.")
-        return {"success": False, "message": "Prompt cannot be empty"}, 400
+        return {"success": False, "message": "El prompt no puede estar vacío"}, 400
 
     # Extract user from validation result
     user = validation_result["user"]
@@ -220,8 +219,8 @@ def thread():
 
     Returns:
         200 OK: {"success": true, "message": "<generated thread content>"}
-        400 Bad Request: {"success": false, "message": "Prompt cannot be empty"}
-        401 Unauthorized: {"success": false, "message": "Authorization token required" or validation error}
+        400 Bad Request: {"success": false, "message": "El prompt no puede estar vacío"}
+        401 Unauthorized: {"success": false, "message": "Token de autorización requerido" or validation error}
     """
     client = genai.Client(api_key=os.getenv("GOOGLE_AI_STUDIO_API_KEY"))
 
@@ -229,7 +228,7 @@ def thread():
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
         log.append(f"{datetime.now()} No se pudo generar un hilo de X: Token de autorización requerido.")
-        return {"success": False, "message": "Authorization token required"}, 401
+        return {"success": False, "message": "Token de autorización requerido"}, 401
 
     token = auth_header.split(" ")[1]
 
@@ -243,7 +242,7 @@ def thread():
 
     if not prompt:
         log.append(f"{datetime.now()} No se pudo generar un hilo de X: El prompt no puede estar vacío.")
-        return {"success": False, "message": "Prompt cannot be empty"}, 400
+        return {"success": False, "message": "El prompt no puede estar vacío"}, 400
 
     # Extract user from validation result
     user = validation_result["user"]
@@ -287,8 +286,8 @@ def change_tone():
 
     Returns:
         200 OK: {"success": true, "message": "<rewritten text>"}
-        400 Bad Request: {"success": false, "message": "Text cannot be empty"}
-        401 Unauthorized: {"success": false, "message": "Authorization token required" or validation error}
+        400 Bad Request: {"success": false, "message": "El texto no puede estar vacío"}
+        401 Unauthorized: {"success": false, "message": "Token de autorización requerido" or validation error}
     """
     client = genai.Client(api_key=os.getenv("GOOGLE_AI_STUDIO_API_KEY"))
 
@@ -296,7 +295,7 @@ def change_tone():
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
         log.append(f"{datetime.now()} No se pudo cambiar el tono del texto: Token de autorización requerido.")
-        return {"success": False, "message": "Authorization token required"}, 401
+        return {"success": False, "message": "Token de autorización requerido"}, 401
 
     token = auth_header.split(" ")[1]
 
@@ -315,7 +314,7 @@ def change_tone():
 
     if not text:
         log.append(f"{datetime.now()} No se pudo cambiar el tono del texto: El texto no puede estar vacío.")
-        return {"success": False, "message": "Text cannot be empty"}, 400
+        return {"success": False, "message": "El texto no puede estar vacío"}, 400
 
     response = client.models.generate_content(
         model="gemini-2.0-flash",

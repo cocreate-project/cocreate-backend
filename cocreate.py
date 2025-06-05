@@ -1,11 +1,12 @@
 from dotenv import load_dotenv
 from cocreate import create_app
-from cocreate.utils import db, log
- 
+from cocreate.utils import db
+from flask_cors import CORS
 
 load_dotenv()
 
 app = create_app()
+CORS(app)
 
 log.generate()
 

@@ -4,7 +4,7 @@ from datetime import datetime
 
 bp = Blueprint("user", __name__, url_prefix="/user")
 
-@bp.get("/")
+@bp.get("")
 def get_user_data():
     """Get user profile data for the authenticated user.
     
@@ -14,7 +14,7 @@ def get_user_data():
     Returns:
         200 OK: {
             "success": true,
-            "message": "User found.",
+            "message": "Usuario encontrado",
             "user": {
                 "id": int,
                 "username": string,
@@ -31,7 +31,7 @@ def get_user_data():
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
         log.append(f"{datetime.now()} No se pudo obtener los datos del usuario: Token de autorización requerido.")
-        return {"success": False, "message": "Authorization token required"}, 401
+        return {"success": False, "message": "Token de autorización requerido"}, 401
 
     token = auth_header.split(" ")[1]
 
@@ -48,6 +48,6 @@ def get_user_data():
     
     return {
         "success": True,
-        "message": "User found.",
+        "message": "Usuario encontrado",
         "user": user
     }, 200
