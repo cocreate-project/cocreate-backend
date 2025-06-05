@@ -30,7 +30,7 @@ def video_script():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        log.append(f"{datetime.now()} Failed to generate video script: Authorization token required.")
+        log.append(f"{datetime.now()} No se pudo generar guion de video: Token de autorización requerido.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -38,13 +38,13 @@ def video_script():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
-        log.append(f"{datetime.now()} Failed to generate video script: {validation_result['message']}")
+        log.append(f"{datetime.now()} No se pudo generar guion de video: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     prompt = request.get_json()["prompt"]
 
     if not prompt:
-        log.append(f"{datetime.now()} Failed to generate video script: Prompt cannot be empty.")
+        log.append(f"{datetime.now()} No se pudo generar guion de video: El prompt no puede estar vacío.")
         return {"success": False, "message": "Prompt cannot be empty"}, 400
 
     # Extract user from validation result
@@ -64,7 +64,7 @@ def video_script():
 
     db.create_generation(user["id"], "video_script", response.text)
 
-    log.append(f"{datetime.now()} User {user['username']} generated a video script.")
+    log.append(f"{datetime.now()} El usuario {user['username']} generó un guion de video.")
 
     return {"success": True, "message": response.text}, 200
 
@@ -91,7 +91,7 @@ def content_idea():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        log.append(f"{datetime.now()} Failed to generate content ideas: Authorization token required.")
+        log.append(f"{datetime.now()} No se pudo generar ideas de contenido: Token de autorización requerido.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -99,13 +99,13 @@ def content_idea():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
-        log.append(f"{datetime.now()} Failed to generate content ideas: {validation_result['message']}")
+        log.append(f"{datetime.now()} No se pudo generar ideas de contenido: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     prompt = request.get_json()["prompt"]
 
     if not prompt:
-        log.append(f"{datetime.now()} Failed to generate content ideas: Prompt cannot be empty.")
+        log.append(f"{datetime.now()} No se pudo generar ideas de contenido: El prompt no puede estar vacío.")
         return {"success": False, "message": "Prompt cannot be empty"}, 400
 
     # Extract user from validation result
@@ -125,7 +125,7 @@ def content_idea():
 
     db.create_generation(user["id"], "content_idea", response.text)
 
-    log.append(f"{datetime.now()} User {user['username']} generated content ideas.")
+    log.append(f"{datetime.now()} El usuario {user['username']} generó ideas de contenido.")
 
     return {"success": True, "message": response.text}, 200
 
@@ -152,7 +152,7 @@ def newsletter():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        log.append(f"{datetime.now()} Failed to generate newsletter: Authorization token required.")
+        log.append(f"{datetime.now()} No se pudo generar un newsletter: Token de autorización requerido.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -160,13 +160,13 @@ def newsletter():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
-        log.append(f"{datetime.now()} Failed to generate newsletter: {validation_result['message']}")
+        log.append(f"{datetime.now()} No se pudo generar un newsletter: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     prompt = request.get_json()["prompt"]
 
     if not prompt:
-        log.append(f"{datetime.now()} Failed to generate newsletter: Prompt cannot be empty.")
+        log.append(f"{datetime.now()} No se pudo generar un newsletter: El prompt no puede estar vacío.")
         return {"success": False, "message": "Prompt cannot be empty"}, 400
 
     # Extract user from validation result
@@ -194,7 +194,7 @@ def newsletter():
 
     db.create_generation(user["id"], "newsletter", response.text)
 
-    log.append(f"{datetime.now()} User {user['username']} generated a newsletter.")
+    log.append(f"{datetime.now()} El usuario {user['username']} generó un newsletter.")
 
     return {
         "success": True,
@@ -228,7 +228,7 @@ def thread():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        log.append(f"{datetime.now()} Failed to generate X thread: Authorization token required.")
+        log.append(f"{datetime.now()} No se pudo generar un hilo de X: Token de autorización requerido.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -236,13 +236,13 @@ def thread():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
-        log.append(f"{datetime.now()} Failed to generate X thread: {validation_result['message']}")
+        log.append(f"{datetime.now()} No se pudo generar un hilo de X: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     prompt = request.get_json()["prompt"]
 
     if not prompt:
-        log.append(f"{datetime.now()} Failed to generate X thread: Prompt cannot be empty.")
+        log.append(f"{datetime.now()} No se pudo generar un hilo de X: El prompt no puede estar vacío.")
         return {"success": False, "message": "Prompt cannot be empty"}, 400
 
     # Extract user from validation result
@@ -267,7 +267,7 @@ def thread():
 
     db.create_generation(user["id"], "thread", response.text)
 
-    log.append(f"{datetime.now()} User {user['username']} generated an X thread.")
+    log.append(f"{datetime.now()} El usuario {user['username']} generó un hilo de X.")
 
     return {"success": True, "message": response.parsed}, 200
 
@@ -295,7 +295,7 @@ def change_tone():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        log.append(f"{datetime.now()} Failed to change tone of text: Authorization token required.")
+        log.append(f"{datetime.now()} No se pudo cambiar el tono del texto: Token de autorización requerido.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -303,7 +303,7 @@ def change_tone():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
-        log.append(f"{datetime.now()} Failed to change tone of text: {validation_result['message']}")
+        log.append(f"{datetime.now()} No se pudo cambiar el tono del texto: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
     
     # Extract user from validation result
@@ -314,7 +314,7 @@ def change_tone():
     tone = data.get("tone", "profesional")
 
     if not text:
-        log.append(f"{datetime.now()} Failed to change tone of text: Text cannot be empty.")
+        log.append(f"{datetime.now()} No se pudo cambiar el tono del texto: El texto no puede estar vacío.")
         return {"success": False, "message": "Text cannot be empty"}, 400
 
     response = client.models.generate_content(
@@ -326,6 +326,6 @@ def change_tone():
         ),
     )
 
-    log.append(f"{datetime.now()} User {user['username']} changed tone of text.")
+    log.append(f"{datetime.now()} El usuario {user['username']} cambió el tono de un texto.")
 
     return {"success": True, "message": response.text}, 200

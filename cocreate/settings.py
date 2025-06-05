@@ -23,7 +23,7 @@ def delete_user():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        log.append(f"{datetime.now()} Failed to delete account: Authorization token required.")
+        log.append(f"{datetime.now()} No se pudo eliminar la cuenta: Token de autorización requerido.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -31,7 +31,7 @@ def delete_user():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
-        log.append(f"{datetime.now()} Failed to delete account: {validation_result['message']}")
+        log.append(f"{datetime.now()} No se pudo eliminar la cuenta: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     # Extract user from validation result
@@ -40,7 +40,7 @@ def delete_user():
     # Delete user account
     delete_result = db.delete_user(user["id"])
     if not delete_result["success"]:
-        log.append(f"{datetime.now()} Failed to delete account for user {user['username']}: {delete_result['message']}")
+        log.append(f"{datetime.now()} No se pudo eliminar la cuenta del usuario {user['username']}: {delete_result['message']}")
         return delete_result, 400
     
     log.append(f"{datetime.now()} User {user['username']} account deleted successfully.")
@@ -73,7 +73,7 @@ def update_content_type():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        log.append(f"{datetime.now()} Failed to update content type: Authorization token required.")
+        log.append(f"{datetime.now()} No se pudo actualizar el tipo de contenido: Token de autorización requerido.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -81,14 +81,14 @@ def update_content_type():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
-        log.append(f"{datetime.now()} Failed to update content type: {validation_result['message']}")
+        log.append(f"{datetime.now()} No se pudo actualizar el tipo de contenido: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     data = request.json or {}
     content_type = data.get("content_type", "")
 
     if not content_type:
-        log.append(f"{datetime.now()} Failed to update content type: Content type cannot be empty.")
+        log.append(f"{datetime.now()} No se pudo actualizar el tipo de contenido: El tipo de contenido no puede estar vacío.")
         return {"success": False, "message": "Content type cannot be empty"}, 400
 
     # Extract user from validation result
@@ -97,10 +97,10 @@ def update_content_type():
     # Update user content type
     update_result = db.update_user_content_type(user["id"], content_type)
     if not update_result["success"]:
-        log.append(f"{datetime.now()} Failed to update content type for user {user['username']}: {update_result['message']}")
+        log.append(f"{datetime.now()} No se pudo actualizar el tipo de contenido para el usuario {user['username']}: {update_result['message']}")
         return update_result, 400
 
-    log.append(f"{datetime.now()} User {user['username']} content type set to: {content_type}.")
+    log.append(f"{datetime.now()} Tipo de contenido del usuario {user['username']} actualizado a: {content_type}.")
 
     return {
         "success": True,
@@ -131,7 +131,7 @@ def update_target_audience():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        log.append(f"{datetime.now()} Failed to update target audience: Authorization token required.")
+        log.append(f"{datetime.now()} No se pudo actualizar el público objetivo: Token de autorización requerido.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -139,14 +139,14 @@ def update_target_audience():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
-        log.append(f"{datetime.now()} Failed to update target audience: {validation_result['message']}")
+        log.append(f"{datetime.now()} No se pudo actualizar el público objetivo: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     data = request.json or {}
     target_audience = data.get("target_audience", "")
 
     if not target_audience:
-        log.append(f"{datetime.now()} Failed to update target audience: Target audience cannot be empty.")
+        log.append(f"{datetime.now()} No se pudo actualizar el público objetivo: El público objetivo no puede estar vacío.")
         return {"success": False, "message": "Target audience cannot be empty"}, 400
 
     # Extract user from validation result
@@ -155,10 +155,10 @@ def update_target_audience():
     # Update user target audience
     update_result = db.update_user_target_audience(user["id"], target_audience)
     if not update_result["success"]:
-        log.append(f"{datetime.now()} Failed to update target audience for user {user['username']}: {update_result['message']}")
+        log.append(f"{datetime.now()} No se pudo actualizar el público objetivo del usuario {user['username']}: {update_result['message']}")
         return update_result, 400
     
-    log.append(f"{datetime.now()} User {user['username']} target audience set to: {target_audience}.")
+    log.append(f"{datetime.now()} Público objetivo del usuario {user['username']} actualizado a: {target_audience}.")
 
     return {
         "success": True,
@@ -189,7 +189,7 @@ def update_additional_context():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        log.append(f"{datetime.now()} Failed to update additional context: Authorization token required.")
+        log.append(f"{datetime.now()} No se pudo actualizar el contexto adicional: Token de autorización requerido.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -197,7 +197,7 @@ def update_additional_context():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
-        log.append(f"{datetime.now()} Failed to update additional context: {validation_result['message']}")
+        log.append(f"{datetime.now()} No se pudo actualizar el contexto adicional: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     data = request.json or {}
@@ -209,13 +209,13 @@ def update_additional_context():
     # Update user additional context
     update_result = db.update_user_additional_context(user["id"], additional_context)
     if not update_result["success"]:
-        log.append(f"{datetime.now()} Failed to update additional context for user {user['username']}: {update_result['message']}")
+        log.append(f"{datetime.now()} No se pudo actualizar el contexto adicional del usuario {user['username']}: {update_result['message']}")
         return update_result, 400
     
     if additional_context:
-        log.append(f"{datetime.now()} User {user['username']} additional context set to: {additional_context}.")
+        log.append(f"{datetime.now()} Contexto adicional del usuario {user['username']} aactualizado a: {additional_context}.")
     else:
-        log.append(f"{datetime.now()} User {user['username']} additional context cleared.")
+        log.append(f"{datetime.now()} Contexto adicional del usuario {user['username']} vaciado.")
 
     return {
         "success": True,

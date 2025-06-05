@@ -23,7 +23,7 @@ def get_generations():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        log.append(f"{datetime.now()} Failed to retrieve generations: Authorization token required.")
+        log.append(f"{datetime.now()} No se pudo obtener generaciones: Token de autorización requerido.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -31,7 +31,7 @@ def get_generations():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
-        log.append(f"{datetime.now()} Failed to retrieve generations: {validation_result['message']}")
+        log.append(f"{datetime.now()} No se pudo obtener generaciones: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     # Extract user from validation result
@@ -40,13 +40,13 @@ def get_generations():
     generations = db.get_generations_by_user_id(user["id"])
 
     if len(generations["data"]) == 0:
-        log.append(f"{datetime.now()} User {user['username']} attempted to retrieve generations but found none.")
+        log.append(f"{datetime.now()} El usuario {user['username']} intentó obtener generaciones pero no se encontró ninguna.")
         return {
             "success": False,
             "message": "No generations found for this user.",
         }
     
-    log.append(f"{datetime.now()} User {user['username']} retrieved generations successfully.")
+    log.append(f"{datetime.now()} El usuario {user['username']} obtuvo sus generaciones con éxito.")
 
     return {
         "success": True,
@@ -74,7 +74,7 @@ def get_generation_by_gen_id(gen_id):
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        log.append(f"{datetime.now()} Failed to retrieve generation {gen_id}: Authorization token required.")
+        log.append(f"{datetime.now()} No se pudo obtener la generación {gen_id}: Token de autorización requerido.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -82,7 +82,7 @@ def get_generation_by_gen_id(gen_id):
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
-        log.append(f"{datetime.now()} Failed to retrieve generation {gen_id}: {validation_result['message']}")
+        log.append(f"{datetime.now()} No se pudo obtener la generación {gen_id}: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     # Extract user from validation result
@@ -91,10 +91,10 @@ def get_generation_by_gen_id(gen_id):
     generation = db.get_generation_by_gen_id(user["id"], gen_id)
 
     if not generation["success"]:
-        log.append(f"{datetime.now()} User {user['username']} attempted to retrieve generation {gen_id} but it was not found.")
+        log.append(f"{datetime.now()} El usuario {user['username']} intentó obtener la generación {gen_id} pero no se encontró.")
         return {"success": False, "message": "Generation not found for this user."}, 404
 
-    log.append(f"{datetime.now()} User {user['username']} retrieved generation {gen_id} successfully.")
+    log.append(f"{datetime.now()} El usuario {user['username']} obtuvo la generación {gen_id} con éxito.")
 
     return {
         "success": True,
@@ -124,7 +124,7 @@ def save_generation():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        log.append(f"{datetime.now()} Failed to save generation: Authorization token required.")
+        log.append(f"{datetime.now()} No se pudo guardar una generación: Token de autorización requerido.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -132,7 +132,7 @@ def save_generation():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
-        log.append(f"{datetime.now()} Failed to save generation: {validation_result['message']}")
+        log.append(f"{datetime.now()} No se pudo guardar una: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     # Extract user from validation result
@@ -141,16 +141,16 @@ def save_generation():
     # Get generation ID from request
     generation_id = request.json.get("gen_id")
     if not generation_id:
-        log.append(f"{datetime.now()} User {user['username']} failed to save generation: Generation ID is required.")
+        log.append(f"{datetime.now()} El usuario {user['username']} no pudo guardar una generación: ID de la generación requerido.")
         return {"success": False, "message": "Generation ID is required"}, 400
 
     # Save generation to database
     save_result = db.save_generation(user["id"], generation_id)
     if not save_result["success"]:
-        log.append(f"{datetime.now()} User {user['username']} failed to save generation {generation_id}: {save_result['message']}")
+        log.append(f"{datetime.now()} El usuario {user['username']} no pudo guardar la generación {generation_id}: {save_result['message']}")
         return {"success": False, "message": save_result["message"]}, 500
     
-    log.append(f"{datetime.now()} User {user['username']} saved generation {generation_id} successfully.")
+    log.append(f"{datetime.now()} El usuario {user['username']} guardó la generación {generation_id} con éxito.")
 
     return {"success": True, "message": "Generation saved successfully."}
 
@@ -175,7 +175,7 @@ def unsave_generation():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        log.append(f"{datetime.now()} Failed to unsave generation: Authorization token required.")
+        log.append(f"{datetime.now()} No se pudo guardar una generación: Token de autorización requerido.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -192,16 +192,16 @@ def unsave_generation():
     # Get generation ID from request
     generation_id = request.json.get("gen_id")
     if not generation_id:
-        log.append(f"{datetime.now()} User {user['username']} failed to unsave generation: Generation ID is required.")
+        log.append(f"{datetime.now()} El usuario {user['username']} no pudo remover una generación: ID de la generación requerido.")
         return {"success": False, "message": "Generation ID is required"}, 400
 
     # Unsave generation from database
     unsave_result = db.unsave_generation(user["id"], generation_id)
     if not unsave_result["success"]:
-        log.append(f"{datetime.now()} User {user['username']} failed to unsave generation {generation_id}: {unsave_result['message']}")
+        log.append(f"{datetime.now()} El usuario {user['username']} no pudo remover la generación {generation_id}: {unsave_result['message']}")
         return {"success": False, "message": unsave_result["message"]}, 500
     
-    log.append(f"{datetime.now()} User {user['username']} unsaved generation {generation_id} successfully.")
+    log.append(f"{datetime.now()} El usuario {user['username']} removió la generación {generation_id} con éxito.")
 
     return {"success": True, "message": "Generation unsaved successfully."}
 
@@ -223,7 +223,7 @@ def get_saved_generations():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        log.append(f"{datetime.now()} Failed to retrieve saved generations: Authorization token required.")
+        log.append(f"{datetime.now()} No se pudo obtener las generaciones guardadas: Token de autorización requerido.")
         return {"success": False, "message": "Authorization token required"}, 401
 
     token = auth_header.split(" ")[1]
@@ -231,7 +231,7 @@ def get_saved_generations():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
-        log.append(f"{datetime.now()} Failed to retrieve saved generations: {validation_result['message']}")
+        log.append(f"{datetime.now()} No se pudo obtener las generaciones guardadas: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     # Extract user from validation result
@@ -240,13 +240,13 @@ def get_saved_generations():
     saved_generations = db.get_saved_generations_by_user_id(user["id"])
 
     if len(saved_generations["data"]) == 0:
-        log.append(f"{datetime.now()} User {user['username']} attempted to retrieve saved generations but found none.")
+        log.append(f"{datetime.now()} El usuario {user['username']} intentó obtener las generaciones guardadas pero no se encontró ninguna.")
         return {
             "success": False,
             "message": "No saved generations found for this user.",
         }
     
-    log.append(f"{datetime.now()} User {user['username']} retrieved saved generations successfully.")
+    log.append(f"{datetime.now()} El usuario {user['username']} obtuvo las generaciones guardadas con éxito.")
 
     return {
         "success": True,
