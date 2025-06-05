@@ -43,7 +43,7 @@ def delete_user():
         log.append(f"{datetime.now()} No se pudo eliminar la cuenta del usuario {user['username']}: {delete_result['message']}")
         return delete_result, 400
     
-    log.append(f"{datetime.now()} User {user['username']} account deleted successfully.")
+    log.append(f"{datetime.now()} Cuenta del usuario {user['username']} eliminada con éxito.")
 
     return {
         "success": True,
