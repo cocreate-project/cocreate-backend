@@ -8,6 +8,8 @@ load_dotenv()
 app = create_app()
 CORS(app)
 
+log.generate()
+
 if __name__ == "__main__":
     db.create_database()
     app.run()

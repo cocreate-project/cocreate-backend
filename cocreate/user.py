@@ -1,5 +1,6 @@
 from flask import Blueprint, request
-from .utils import validate
+from .utils import validate, log
+from datetime import datetime
 
 bp = Blueprint("user", __name__, url_prefix="/user")
 
@@ -29,6 +30,7 @@ def get_user_data():
     # Get token from Authorization header
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
+        log.append(f"{datetime.now()} No se pudo obtener los datos del usuario: Token de autorización requerido.")
         return {"success": False, "message": "Token de autorización requerido"}, 401
 
     token = auth_header.split(" ")[1]
@@ -36,10 +38,13 @@ def get_user_data():
     # Validate JWT token
     validation_result = validate.validate_jwt(token)
     if not validation_result["success"]:
+        log.append(f"{datetime.now()} No se pudo obtener los datos del usuario: {validation_result['message']}")
         return {"success": False, "message": validation_result["message"]}, 401
 
     # Extract user from validation result
     user = validation_result["user"]
+
+    log.append(f"{datetime.now()} Datos del usuario {user['username']} obtenidos con éxito.")
     
     return {
         "success": True,
