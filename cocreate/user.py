@@ -3,7 +3,7 @@ from .utils import validate
 
 bp = Blueprint("user", __name__, url_prefix="/user")
 
-@bp.get("/")
+@bp.get("")
 def get_user_data():
     """Get user profile data for the authenticated user.
     
