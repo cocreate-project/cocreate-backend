@@ -253,3 +253,88 @@ def get_saved_generations():
         "message": "Generaciones favoritas encontradas",
         "saved_generations": saved_generations["data"],
     }
+
+
+@bp.get("/export")
+def export_generations():
+    """Retrieve all generations for the authenticated user and export them to a JSON file.
+    
+    Request Headers:
+        Authorization: Bearer <jwt_token> - Required. JWT token for authentication
+        
+    Returns:
+        200 OK: {
+            "success": true,
+            "message": "Generaciones exportadas",
+            "generations": [array_of_generation_objects]
+        }
+        401 Unauthorized: {"success": false, "message": error_message}
+        500 Internal Server Error: {"success": false, "message": error_message}
+    """
+    import os, json
+
+    # Get token from Authorization header
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        log.append(f"{datetime.now()} No se pudo obtener generaciones: Token de autorización requerido.")
+        return {"success": False, "message": "Token de autorización requerido"}, 401
+
+    token = auth_header.split(" ")[1]
+
+    # Validate JWT token
+    validation_result = validate.validate_jwt(token)
+    if not validation_result["success"]:
+        log.append(f"{datetime.now()} No se pudo obtener generaciones: {validation_result['message']}")
+        return {"success": False, "message": validation_result["message"]}, 401
+
+    # Extract user from validation result
+    user = validation_result["user"]
+
+    generations = db.get_generations_by_user_id(user["id"])
+
+    if len(generations["data"]) == 0:
+        log.append(f"{datetime.now()} El usuario {user['username']} intentó obtener generaciones pero no se encontró ninguna.")
+        return {
+            "success": False,
+            "message": "No se encontraron generaciones para este usuario",
+        }
+    
+    log.append(f"{datetime.now()} El usuario {user['username']} obtuvo sus generaciones con éxito.")
+
+    path = "exported_generations"
+    if not os.path.exists(path):
+        os.makedirs(path)
+    filename = f"{user['username']}_generations_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    full_path = os.path.join(path, filename)
+
+    try:
+        json_file = open(full_path, "w", encoding="utf-8")
+        try:
+            json.dump(generations["data"], json_file, ensure_ascii=False, indent=4)
+        except Exception as e:
+            log.append(f"{datetime.now()} Error al escribir en el archivo: {str(e)}")
+            return {
+                "success": False,
+                "message": f"Error al exportar generaciones: {str(e)}"
+            }, 500
+        finally:
+            json_file.close()
+    except PermissionError:
+        log.append(f"{datetime.now()} Error al exportar generaciones: Permiso denegado al escribir en el archivo {full_path}.")
+        return {
+            "success": False,
+            "message": f"Error al exportar generaciones: Permiso denegado al escribir en el archivo {full_path}."
+        }, 500
+    except Exception as e:
+        log.append(f"{datetime.now()} Error al exportar generaciones: {str(e)}")
+        return {
+            "success": False,
+            "message": f"Error al exportar generaciones: {str(e)}"
+        }, 500
+    finally:
+        log.append(f"{datetime.now()} El usuario {user['username']} exportó sus generaciones a {filename} con éxito.")
+        return {
+            "success": True,
+            "message": "Generaciones exportadas",
+            "generations": generations["data"],
+         }, 200
