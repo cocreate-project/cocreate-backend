@@ -1,4 +1,5 @@
 import sqlite3
+import random
 from . import password
 from . import format
 
@@ -7,11 +8,10 @@ def create_database() -> None:
     conn = sqlite3.connect("cocreate.db")
     cursor = conn.cursor()
 
-    # Users table creation
     cursor.execute(
         """
         CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id INTEGER PRIMARY KEY,
             username TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL,
             content_type TEXT,
@@ -39,6 +39,30 @@ def create_database() -> None:
     conn.close()
 
 
+def generate_unique_user_id() -> int:
+    """
+    Recursively generate a unique user ID.
+    If the generated ID already exists, the function calls itself again.
+    """
+    conn = sqlite3.connect("cocreate.db")
+    cursor = conn.cursor()
+    
+    try:
+        generated_id = random.randint(1000, 999999)
+        
+        cursor.execute("SELECT id FROM users WHERE id = ?", (generated_id,))
+        existing_user = cursor.fetchone()
+        
+        if existing_user is None:
+            return generated_id
+        else:
+            return generate_unique_user_id()
+            
+    finally:
+        cursor.close()
+        conn.close()
+
+
 def create_user(
     _username="",
     _password="",
@@ -50,15 +74,18 @@ def create_user(
     cursor = conn.cursor()
 
     try:
+        user_id = generate_unique_user_id()
+        
         password_hash = password.hash(_password)
         formatted_username = _username.lower()
 
         cursor.execute(
             """
-            INSERT INTO users (username, password, content_type, target_audience, additional_context, generations, favorite_generations)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO users (id, username, password, content_type, target_audience, additional_context, generations, favorite_generations)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """,
             (
+                user_id,
                 formatted_username,
                 password_hash,
                 _content_type,
@@ -74,6 +101,7 @@ def create_user(
             "success": True,
             "message": f"Usuario {formatted_username} creado.",
             "username": formatted_username,
+            "user_id": user_id,
         }
 
     except sqlite3.IntegrityError:
