@@ -1,3 +1,4 @@
+import os
 from dotenv import load_dotenv
 from cocreate import create_app
 from cocreate.utils import db, log
@@ -12,4 +13,5 @@ log.generate()
 
 if __name__ == "__main__":
     db.create_database()
-    app.run()
+    port = int(os.getenv("PORT", 5000))
+    app.run(port=port)
